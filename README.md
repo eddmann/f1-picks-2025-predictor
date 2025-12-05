@@ -19,29 +19,76 @@ If ML can't beat these trivial approaches, it provides no value.
 
 ## Results
 
-| Model            | CV Score | Key Insight                                  |
-| ---------------- | -------- | -------------------------------------------- |
-| **Qualifying**   | 3.18 pts | ELO ratings + sector times + practice pace   |
-| **Race**         | 2.80 pts | Grid position explains ~60% of race outcome  |
-| **Sprint Quali** | 2.40 pts | Limited data (~6 weekends/year since 2021)   |
-| **Sprint Race**  | 2.90 pts | Grid position (from SQ) is primary predictor |
+Cross-validated on 5-fold temporal splits (2020-2025 data):
 
-**Bottom line:** The models provide useful predictions, but race outcomes are fundamentally constrained by grid position dominance - cars starting at the front usually finish there.
+| Model            | CV Score     | Accuracy | Key Insight                                 |
+| ---------------- | ------------ | -------- | ------------------------------------------- |
+| **Qualifying**   | 3.34/6.0 pts | 56%      | ELO ratings + practice pace + sector times  |
+| **Race**         | 3.18/6.0 pts | 53%      | Grid position explains ~60% of race outcome |
+| **Sprint Quali** | 4.00/6.0 pts | 67%      | Historical quali correlation + ELO ratings  |
+| **Sprint Race**  | 3.60/6.0 pts | 60%      | SQ grid position + ELO ratings              |
 
-## The Journey
+**Season projection:** ~202 points out of 360 possible (56%) across all sessions.
 
-How this project evolved - experiments, failures, and insights.
+**What this means in practice:**
 
-**[Read the full development story →](docs/journey.md)**
+- Typically predicts 1-2 exact position matches per session
+- Gets the right drivers in top-3 ~55-65% of the time
+- Sprint Qualifying is the strongest model despite limited data (11 sessions)
 
-Highlights:
+**Bottom line:** The models provide useful predictions that beat simple baselines. Race outcomes remain hardest to predict due to strategy variance, incidents, and the fundamental constraint that cars starting at the front usually finish there.
 
-- **Phase 1:** Kaggle → FastF1, Classification → LambdaRank
-- **Phase 2:** Baseline reality check (sobering truths)
-- **Phase 3:** ELO ratings (+3%), Reliability (+2%), First lap features (+6.5%)
-- **Phase 4:** The race prediction wall (grid dominates, chaos explains the rest)
-- **Phase 5:** Hyperparameter tuning (+7.6%)
-- **Phase 6:** Wet weather, track evolution, circuit overtaking features (+7.4%)
+## How It Works
+
+### Model Architecture
+
+Each session type has its own **LightGBM LambdaRank** model optimized for learning-to-rank. The models predict a relevance score for each driver, then rank them to get the top-3.
+
+**Why LambdaRank?** Traditional classification (predicting P1/P2/P3 as classes) doesn't capture that P2 is "closer" to P1 than P10 is. LambdaRank optimizes pairwise rankings directly.
+
+### Feature Categories
+
+~250-330 features per model (varies by session type):
+
+| Category            | Description                                                  |
+| ------------------- | ------------------------------------------------------------ |
+| **ELO Ratings**     | Driver and constructor skill ratings updated after each race |
+| **Recent Form**     | Rolling averages of positions, top-3 rates, consistency      |
+| **Practice Pace**   | FP1/FP2/FP3 lap times, gaps to leader, improvement trends    |
+| **Circuit History** | Driver performance at specific tracks and circuit types      |
+| **Reliability**     | DNF rates, mechanical failures, incident patterns            |
+| **First Lap**       | Position gains/losses on lap 1, overtaking ability           |
+| **Weather**         | Wet weather skill, temperature preferences                   |
+| **Grid Position**   | Qualifying result features (race models only)                |
+| **Sector Times**    | S1/S2/S3 strengths, theoretical best laps                    |
+| **Track Evolution** | Grip improvement through sessions                            |
+
+### Temporal Integrity
+
+All features use **strict temporal ordering** - predictions for Race N only use data from Races 1 to N-1. This prevents data leakage and ensures realistic evaluation.
+
+**Sprint Weekend Constraints:**
+
+The 2025 sprint format is: FP1 → Sprint Quali → Sprint Race → Qualifying → Race
+
+| Predicting   | Available Data              | NOT Available        |
+| ------------ | --------------------------- | -------------------- |
+| Sprint Quali | FP1, historical             | Sprint Race, Q, Race |
+| Sprint Race  | FP1, SQ grid, historical    | Q, Race              |
+| Qualifying   | FP1, SQ, Sprint, historical | Race                 |
+| Race         | All sessions + Q grid       | -                    |
+
+### Hyperparameter Tuning
+
+Models are tuned using **Optuna** with Bayesian optimization over 50 trials. Key parameters:
+
+- `n_estimators`: 80-300 boosting rounds
+- `num_leaves`: 15-50 tree complexity
+- `learning_rate`: 0.01-0.2
+- `min_child_samples`: regularization strength
+- `subsample` / `colsample_bytree`: feature/row sampling
+
+Sprint models benefited most from tuning (+67% for Sprint Quali) as the original conservative settings were too restrictive.
 
 ## Quick Start
 
@@ -117,22 +164,37 @@ PREDICTED TOP 3:
 ============================================================
 ```
 
-## Technical Reference
+## Development
 
-Detailed documentation on features, model architecture, and training.
+### Training & Tuning
 
-**[Read the technical reference →](docs/technical-reference.md)**
+```bash
+# Train all models with current hyperparameters
+make train
 
-Topics covered:
+# Hyperparameter tuning (50 Optuna trials)
+make train/tune TYPE=qualifying TRIALS=50
+make train/tune TYPE=race TRIALS=50
+make train/tune TYPE=sprint_quali TRIALS=50
+make train/tune TYPE=sprint_race TRIALS=50
+```
 
-- Model architecture (LightGBM LambdaRank)
-- Feature categories and importance
-- ELO rating system (10 features)
-- Reliability features (24 features)
-- First lap features (35 features)
-- Temporal integrity patterns
-- Training options and hyperparameters
-- Model export formats
+### Testing
+
+```bash
+make test          # Run all tests
+make test/unit     # Unit tests only
+make lint          # Run ruff linter
+make ci            # Full CI checks (lint + format + test)
+```
+
+### Data Management
+
+```bash
+make data/status   # Show data summary
+make data/sessions # List available sessions
+make data/sync SEASON=2025 ROUND=5  # Sync specific round
+```
 
 ## License
 

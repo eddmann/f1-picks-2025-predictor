@@ -34,12 +34,14 @@ class SprintQualiLGBMRanker(BaseLGBMRanker):
     def __init__(
         self,
         objective: str = "lambdarank",
-        n_estimators: int = 80,  # Fewer trees due to limited data
-        num_leaves: int = 20,  # More conservative (less complex)
-        learning_rate: float = 0.08,  # Slower learning
-        min_child_samples: int = 30,  # Higher regularization
-        subsample: float = 0.75,  # More aggressive subsampling
-        colsample_bytree: float = 0.75,  # More aggressive feature sampling
+        n_estimators: int = 298,  # Tuned via Optuna
+        num_leaves: int = 47,  # Tuned via Optuna
+        learning_rate: float = 0.182,  # Tuned via Optuna
+        min_child_samples: int = 50,  # Higher regularization
+        subsample: float = 0.871,  # Tuned via Optuna
+        colsample_bytree: float = 0.781,  # Tuned via Optuna
+        reg_alpha: float = 5.5e-07,  # Tuned via Optuna
+        reg_lambda: float = 2.5e-06,  # Tuned via Optuna
         random_state: int = 42,
         label_gain: list[float] | None = None,
     ):
@@ -67,6 +69,8 @@ class SprintQualiLGBMRanker(BaseLGBMRanker):
             min_child_samples=min_child_samples,
             subsample=subsample,
             colsample_bytree=colsample_bytree,
+            reg_alpha=reg_alpha,
+            reg_lambda=reg_lambda,
             random_state=random_state,
             label_gain=label_gain,
         )

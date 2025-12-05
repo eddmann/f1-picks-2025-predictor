@@ -16,12 +16,16 @@ from optuna.samplers import TPESampler
 from src.evaluation.scoring import calculate_game_points
 from src.features.qualifying_pipeline import QualifyingFeaturePipeline
 from src.features.race_pipeline import RaceFeaturePipeline
+from src.features.sprint_quali_pipeline import SprintQualiFeaturePipeline
+from src.features.sprint_race_pipeline import SprintRaceFeaturePipeline
 from src.models.base_ranker import (
     create_temporal_cv_splits_with_groups,
     prepare_ranking_data,
 )
 from src.models.qualifying import QualifyingLGBMRanker
 from src.models.race import RaceLGBMRanker
+from src.models.sprint_qualifying import SprintQualiLGBMRanker
+from src.models.sprint_race import SprintRaceLGBMRanker
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
@@ -148,6 +152,14 @@ def tune_model(
     elif prediction_type == "race":
         pipeline = RaceFeaturePipeline()
         ranker_class = RaceLGBMRanker
+    elif prediction_type == "sprint_quali":
+        pipeline = SprintQualiFeaturePipeline()
+        ranker_class = SprintQualiLGBMRanker
+        min_year = max(min_year, 2021)  # Sprint format started in 2021
+    elif prediction_type == "sprint_race":
+        pipeline = SprintRaceFeaturePipeline()
+        ranker_class = SprintRaceLGBMRanker
+        min_year = max(min_year, 2021)  # Sprint format started in 2021
     else:
         raise ValueError(f"Unknown prediction type: {prediction_type}")
 
@@ -187,7 +199,7 @@ def main():
     parser = argparse.ArgumentParser(description="Tune LightGBM hyperparameters")
     parser.add_argument(
         "--type",
-        choices=["qualifying", "race", "all"],
+        choices=["qualifying", "race", "sprint_quali", "sprint_race", "all"],
         default="all",
         help="Prediction type to tune",
     )
@@ -221,6 +233,16 @@ def main():
 
     if args.type in ["race", "all"]:
         results["race"] = tune_model("race", n_trials=args.trials, min_year=args.min_year)
+
+    if args.type in ["sprint_quali", "all"]:
+        results["sprint_quali"] = tune_model(
+            "sprint_quali", n_trials=args.trials, min_year=args.min_year
+        )
+
+    if args.type in ["sprint_race", "all"]:
+        results["sprint_race"] = tune_model(
+            "sprint_race", n_trials=args.trials, min_year=args.min_year
+        )
 
     # Save results
     output_path = Path(args.output)
