@@ -1,6 +1,4 @@
-# F1 Picks ML Prediction System
-
-## Why This Exists
+# F1 Picks 2025 Predictor
 
 An exploration into using ML to predict the top-3 finishers for my family's F1 picks game, covering all session types including sprints:
 
