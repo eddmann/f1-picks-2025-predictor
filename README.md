@@ -38,58 +38,6 @@ Cross-validated on 5-fold temporal splits (2020-2025 data):
 
 **Bottom line:** The models provide useful predictions that beat simple baselines. Race outcomes remain hardest to predict due to strategy variance, incidents, and the fundamental constraint that cars starting at the front usually finish there.
 
-## How It Works
-
-### Model Architecture
-
-Each session type has its own **LightGBM LambdaRank** model optimized for learning-to-rank. The models predict a relevance score for each driver, then rank them to get the top-3.
-
-**Why LambdaRank?** Traditional classification (predicting P1/P2/P3 as classes) doesn't capture that P2 is "closer" to P1 than P10 is. LambdaRank optimizes pairwise rankings directly.
-
-### Feature Categories
-
-~250-330 features per model (varies by session type):
-
-| Category            | Description                                                  |
-| ------------------- | ------------------------------------------------------------ |
-| **ELO Ratings**     | Driver and constructor skill ratings updated after each race |
-| **Recent Form**     | Rolling averages of positions, top-3 rates, consistency      |
-| **Practice Pace**   | FP1/FP2/FP3 lap times, gaps to leader, improvement trends    |
-| **Circuit History** | Driver performance at specific tracks and circuit types      |
-| **Reliability**     | DNF rates, mechanical failures, incident patterns            |
-| **First Lap**       | Position gains/losses on lap 1, overtaking ability           |
-| **Weather**         | Wet weather skill, temperature preferences                   |
-| **Grid Position**   | Qualifying result features (race models only)                |
-| **Sector Times**    | S1/S2/S3 strengths, theoretical best laps                    |
-| **Track Evolution** | Grip improvement through sessions                            |
-
-### Temporal Integrity
-
-All features use **strict temporal ordering** - predictions for Race N only use data from Races 1 to N-1. This prevents data leakage and ensures realistic evaluation.
-
-**Sprint Weekend Constraints:**
-
-The 2025 sprint format is: FP1 → Sprint Quali → Sprint Race → Qualifying → Race
-
-| Predicting   | Available Data              | NOT Available        |
-| ------------ | --------------------------- | -------------------- |
-| Sprint Quali | FP1, historical             | Sprint Race, Q, Race |
-| Sprint Race  | FP1, SQ grid, historical    | Q, Race              |
-| Qualifying   | FP1, SQ, Sprint, historical | Race                 |
-| Race         | All sessions + Q grid       | -                    |
-
-### Hyperparameter Tuning
-
-Models are tuned using **Optuna** with Bayesian optimization over 50 trials. Key parameters:
-
-- `n_estimators`: 80-300 boosting rounds
-- `num_leaves`: 15-50 tree complexity
-- `learning_rate`: 0.01-0.2
-- `min_child_samples`: regularization strength
-- `subsample` / `colsample_bytree`: feature/row sampling
-
-Sprint models benefited most from tuning (+67% for Sprint Quali) as the original conservative settings were too restrictive.
-
 ## Quick Start
 
 ### Requirements
@@ -158,11 +106,63 @@ Race: Abu Dhabi Grand Prix (Yas Island)
 Year: 2025, Round: 24
 
 PREDICTED TOP 3:
-  P1: PIA (McLaren) - score: 5.156
-  P2: NOR (McLaren) - score: 3.831
-  P3: VER (Red Bull Racing) - score: 2.239
+  P1: NOR (McLaren) - score: 9.063
+  P2: PIA (McLaren) - score: 8.432
+  P3: VER (Red Bull Racing) - score: 7.056
 ============================================================
 ```
+
+## How It Works
+
+### Model Architecture
+
+Each session type has its own **LightGBM LambdaRank** model optimized for learning-to-rank. The models predict a relevance score for each driver, then rank them to get the top-3.
+
+**Why LambdaRank?** Traditional classification (predicting P1/P2/P3 as classes) doesn't capture that P2 is "closer" to P1 than P10 is. LambdaRank optimizes pairwise rankings directly.
+
+### Feature Categories
+
+~250-330 features per model (varies by session type):
+
+| Category            | Description                                                  |
+| ------------------- | ------------------------------------------------------------ |
+| **ELO Ratings**     | Driver and constructor skill ratings updated after each race |
+| **Recent Form**     | Rolling averages of positions, top-3 rates, consistency      |
+| **Practice Pace**   | FP1/FP2/FP3 lap times, gaps to leader, improvement trends    |
+| **Circuit History** | Driver performance at specific tracks and circuit types      |
+| **Reliability**     | DNF rates, mechanical failures, incident patterns            |
+| **First Lap**       | Position gains/losses on lap 1, overtaking ability           |
+| **Weather**         | Wet weather skill, temperature preferences                   |
+| **Grid Position**   | Qualifying result features (race models only)                |
+| **Sector Times**    | S1/S2/S3 strengths, theoretical best laps                    |
+| **Track Evolution** | Grip improvement through sessions                            |
+
+### Temporal Integrity
+
+All features use **strict temporal ordering** - predictions for Race N only use data from Races 1 to N-1. This prevents data leakage and ensures realistic evaluation.
+
+**Sprint Weekend Constraints:**
+
+The 2025 sprint format is: FP1 → Sprint Quali → Sprint Race → Qualifying → Race
+
+| Predicting   | Available Data              | NOT Available        |
+| ------------ | --------------------------- | -------------------- |
+| Sprint Quali | FP1, historical             | Sprint Race, Q, Race |
+| Sprint Race  | FP1, SQ grid, historical    | Q, Race              |
+| Qualifying   | FP1, SQ, Sprint, historical | Race                 |
+| Race         | All sessions + Q grid       | -                    |
+
+### Hyperparameter Tuning
+
+Models are tuned using **Optuna** with Bayesian optimization over 50 trials. Key parameters:
+
+- `n_estimators`: 80-300 boosting rounds
+- `num_leaves`: 15-50 tree complexity
+- `learning_rate`: 0.01-0.2
+- `min_child_samples`: regularization strength
+- `subsample` / `colsample_bytree`: feature/row sampling
+
+Sprint models benefited most from tuning (+67% for Sprint Quali) as the original conservative settings were too restrictive.
 
 ## Development
 
