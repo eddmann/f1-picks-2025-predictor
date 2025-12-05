@@ -1,0 +1,65 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "f1-picks-2025-predictor"
+version = "1.0.0"
+description = "Predict F1 podium finishers using LightGBM LambdaRank models trained on FastF1 telemetry data"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+    {name = "Edd Mann", email = "the@eddmann.com"}
+]
+dependencies = [
+    "scikit-learn>=1.7.2",
+    "pandas>=2.3.3",
+    "numpy>=2.3.5",
+    "fastf1>=3.7.0",
+    "lightgbm>=4.6.0",
+    "optuna>=4.6.0",
+    "scipy>=1.16.3",
+    "shap>=0.46.0",
+    "pyyaml>=6.0.3",
+    "pyarrow>=22.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.14.8",
+    "pytest>=9.0.1",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "F",   # pyflakes
+    "I",   # isort
+    "N",   # pep8-naming
+    "W",   # pycodestyle warnings
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+]
+ignore = [
+    "E501",  # line too long (handled by formatter)
+    "N803",  # argument name should be lowercase (ML convention uses X, X_train)
+    "N806",  # variable in function should be lowercase (ML convention uses X)
+    "B023",  # lambda in loop - safe in pandas .transform() which executes immediately
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_functions = "test_*"

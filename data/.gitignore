@@ -1,0 +1,4 @@
+# Keep fastf1 data tracked in git (small enough at ~17MB)
+# Only ignore temporary/cache files
+*.tmp
+*.cache

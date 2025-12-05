@@ -1,0 +1,174 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project Overview
+
+F1 prediction system that forecasts top-3 finishers across 4 session types using LightGBM LambdaRank models:
+
+- **Qualifying (Q)** - Predict qualifying top-3
+- **Sprint Qualifying (SQ)** - Predict sprint qualifying top-3 (sprint weekends only)
+- **Sprint Race (S)** - Predict sprint race top-3 (sprint weekends only)
+- **Race (R)** - Predict race top-3
+
+Uses a game scoring system: 2 points for exact position match, 1 point for correct driver in wrong position (max 6 points per session).
+
+## Commands
+
+All commands use Make targets. Run `make help` to see all available targets.
+
+```bash
+# Setup
+make install           # Install dependencies
+make install/dev       # Install with dev extras
+
+# Data Management
+make data              # Download all historical data (2020-2025)
+make data/sync SEASON=2024 ROUND=5   # Sync specific round
+make data/sync/2024    # Sync entire season
+make data/status       # Show data summary
+make data/sessions     # List available sessions
+
+# Training
+make train             # Train all 4 model types
+make train/qualifying  # Train qualifying model only
+make train/race        # Train race model only
+make train/sprint_quali
+make train/sprint_race
+make train/tune TYPE=qualifying TRIALS=50  # Hyperparameter tuning
+
+# Predictions
+make predict/qualifying RACE=2025-qatar
+make predict/race RACE=2025-qatar
+make predict/sprint_quali RACE=2025-qatar  # Sprint weekends only
+make predict/sprint_race RACE=2025-qatar   # Sprint weekends only
+make predict/explain RACE=2025-qatar TYPE=qualifying  # With SHAP explanation
+
+# Evaluation
+make evaluate RACE=2025-qatar TYPE=qualifying
+make evaluate/season SEASON=2024 TYPE=qualifying
+make evaluate/baselines SEASON=2024
+
+# Development
+make test              # Run all tests
+make test/unit         # Run unit tests only
+make lint              # Run ruff linter
+make lint/fix          # Run linter with auto-fix
+make format            # Format code
+make ci                # Run all CI checks (lint + format + test)
+
+# Cleaning
+make clean             # Clean Python cache files
+make clean/models      # Remove trained models
+make clean/all         # Clean everything
+```
+
+## Data Structure
+
+Data is stored as parquet files in `data/fastf1/`:
+
+```
+data/fastf1/
+├── sessions/           # Per-session lap data
+│   ├── 2024_01_FP1.parquet
+│   ├── 2024_01_FP2.parquet
+│   ├── 2024_01_FP3.parquet
+│   ├── 2024_01_Q.parquet
+│   └── 2024_01_R.parquet
+└── metadata/
+    ├── events.parquet  # Race calendar
+    ├── drivers.parquet # Driver registry
+    └── teams.parquet   # Team registry
+```
+
+Session parquet files contain:
+
+- Lap times (total and S1/S2/S3 sectors) in milliseconds
+- Tyre compound and life
+- Speed trap data
+- Qualifying session split (Q1/Q2/Q3)
+- Weather conditions
+- Final position and points
+
+## Architecture
+
+The system enforces strict temporal integrity: features for Race N only use data from Races 1 to N-1. This prevents data leakage and is validated by tests in `tests/unit/test_fastf1_features.py`.
+
+### Multi-Session Architecture
+
+Each prediction type has its own feature pipeline and model due to different data availability:
+
+**Standard Weekend (FP1 → FP2 → FP3 → Q → R):**
+
+| Predicting | Current Weekend Available     | NOT Available |
+| ---------- | ----------------------------- | ------------- |
+| **Q**      | FP1, FP2, FP3, historical     | -             |
+| **R**      | FP1, FP2, FP3, Q grid, hist.  | -             |
+
+**Sprint Weekend (FP1 → SQ → S → Q → R):**
+
+| Predicting | Current Weekend Available        | NOT Available (occurs later) |
+| ---------- | -------------------------------- | ---------------------------- |
+| **SQ**     | FP1 only, historical             | S, Q, R                      |
+| **S**      | FP1, SQ grid, historical         | Q, R                         |
+| **Q**      | FP1, SQ, S, historical           | R                            |
+| **R**      | FP1, Q grid, SQ, S, historical   | -                            |
+
+Note: Sprint weekends have NO FP2 or FP3 sessions.
+
+### Key Modules
+
+**Feature Pipelines** (`src/features/`):
+
+- `base_pipeline.py` - Abstract base class for all pipelines
+- `qualifying_pipeline.py` - Qualifying features (FP1-3 available)
+- `sprint_quali_pipeline.py` - Sprint qualifying (FP1 only)
+- `sprint_race_pipeline.py` - Sprint race (FP1 + SQ grid)
+- `race_pipeline.py` - Race features (all sessions + Q grid)
+- `grid_features.py` - Grid position feature extractor
+
+**Feature Extractors** (`src/features/`) - all use `.shift(1)` before `.rolling()`:
+
+- `sector_features.py` - Sector time analysis (S1/S2/S3 strengths)
+- `qualifying_features.py` - Q1→Q2→Q3 progression patterns
+- `practice_features.py` - FP1/FP2/FP3 pace correlation
+- `tyre_features.py` - Compound preferences and performance
+- `sprint_features.py` - Sprint qualifying and sprint race features
+- `weather_features.py` - Track/air temp, humidity, wet conditions
+- `elo_features.py` - Driver and constructor ELO ratings
+- `reliability_features.py` - DNF rates and driver reliability
+- `first_lap_features.py` - Lap 1 position change performance
+- `momentum_features.py` - Recent form and trend features
+- `relative_features.py` - Position vs field and teammate deltas
+
+**Models** (`src/models/`):
+
+- `base_ranker.py` - Base LGBMRanker class with shared logic
+- `qualifying.py` - QualifyingLGBMRanker
+- `race.py` - RaceLGBMRanker
+- `sprint_qualifying.py` - SprintQualiLGBMRanker (higher regularization)
+- `sprint_race.py` - SprintRaceLGBMRanker (higher regularization)
+- `baselines.py` - Baseline methods for comparison (FP3, Grid, Championship, etc.)
+
+**Data** (`src/data/`):
+
+- `fastf1_sync.py` - Syncs F1 data from FastF1 API to parquet format
+- `loaders.py` - Loads session parquet files with temporal filtering
+
+**Evaluation**:
+
+- `src/evaluation/scoring.py` - Implements the 2/1/0 point scoring system
+
+Data flow: FastF1 API → parquet files → feature pipeline → model training → predictions
+
+## Code Style
+
+- Python 3.11+ with type hints on all public functions
+- Google-style docstrings
+- 100 char line length (enforced by ruff)
+- TimeSeriesSplit for cross-validation (never random splits)
+
+## Key Constraints
+
+- All features must pass temporal leakage tests (use `.shift(1)` before `.rolling()`)
+- New drivers/circuits fall back to team-based or circuit-type predictions
