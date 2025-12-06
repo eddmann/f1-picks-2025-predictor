@@ -28,7 +28,6 @@ ENV/
 .venv/
 
 # Data and Models
-data/fastf1/
 data/predictions/
 models/saved/
 
