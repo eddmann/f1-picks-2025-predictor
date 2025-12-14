@@ -49,6 +49,15 @@ make evaluate RACE=2025-qatar TYPE=qualifying
 make evaluate/season SEASON=2024 TYPE=qualifying
 make evaluate/baselines SEASON=2024
 
+# Model Export (ONNX)
+make export/onnx            # Export all models to ONNX format
+make export/onnx/qualifying # Export specific model
+make export/features RACE=2025-24 TYPE=qualifying  # Export features to JSON
+
+# PHP Inference
+make inference/php FEATURES=2025-24_qualifying.json  # Run PHP prediction
+make inference/php/build    # Build PHP Docker image
+
 # Development
 make test              # Run all tests
 make test/unit         # Run unit tests only
@@ -159,7 +168,24 @@ Note: Sprint weekends have NO FP2 or FP3 sessions.
 
 - `src/evaluation/scoring.py` - Implements the 2/1/0 point scoring system
 
+**CLI Tools** (`src/cli/`):
+
+- `retrain.py` - Train models with cross-validation
+- `predict.py` - Generate predictions for upcoming races
+- `evaluate.py` - Evaluate model performance
+- `tune_hyperparams.py` - Optuna hyperparameter optimization
+- `export_onnx.py` - Export models to ONNX format (patches lambdarank→regression, see [onnxmltools#338](https://github.com/onnx/onnxmltools/issues/338))
+- `export_features.py` - Export computed features to JSON for cross-platform inference
+
+**PHP Inference** (`inference/php/`):
+
+- `predict.php` - Single-file ONNX inference script
+- `Dockerfile` - Builds PHP 8.5 with ORT extension
+- Run with: `make inference/php FEATURES=<file.json>`
+
 Data flow: FastF1 API → parquet files → feature pipeline → model training → predictions
+
+For cross-platform inference: pickle models → ONNX export → feature JSON export → PHP/C++/Rust via ONNX Runtime
 
 ## Code Style
 

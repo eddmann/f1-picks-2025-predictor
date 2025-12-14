@@ -196,6 +196,19 @@ make data/sessions # List available sessions
 make data/sync SEASON=2025 ROUND=5  # Sync specific round
 ```
 
+### Model Export (ONNX)
+
+Export models to ONNX format for cross-platform inference:
+
+```bash
+make export/onnx              # Export all models
+make export/features RACE=2025-24 TYPE=qualifying  # Export features for a race
+```
+
+See [`inference/php/`](inference/php/) for running predictions via PHP + ONNX Runtime.
+
+**Note:** Models use LightGBM's `lambdarank` objective, which is patched to `regression` for ONNX compatibility. Predictions remain identical.
+
 ## License
 
 MIT License - see [LICENSE](LICENSE) file.

@@ -113,6 +113,26 @@ train/tune: ## Tune hyperparameters with Optuna (TYPE=qualifying|race TRIALS=50)
 	fi
 	@uv run python -m src.cli.tune_hyperparams --type $(TYPE) --trials $(or $(TRIALS),50)
 
+##@ Model Export
+
+.PHONY: export/onnx
+export/onnx: ## Export all models to ONNX format
+	@uv run python -m src.cli.export_onnx --type all
+
+# Usage: make export/onnx/qualifying
+.PHONY: export/onnx/%
+export/onnx/%: ## Export specific model to ONNX (e.g., make export/onnx/qualifying)
+	@uv run python -m src.cli.export_onnx --type $*
+
+# Usage: make export/features RACE=2025-24 TYPE=qualifying
+.PHONY: export/features
+export/features: ## Export features for a race to JSON (RACE=2025-24 TYPE=qualifying)
+	@if [ -z "$(RACE)" ] || [ -z "$(TYPE)" ]; then \
+		echo "Usage: make export/features RACE=2025-24 TYPE=qualifying"; \
+		exit 1; \
+	fi
+	@uv run python -m src.cli.export_features --race-id $(RACE) --type $(TYPE)
+
 ##@ Predictions
 
 # Usage: make predict/qualifying RACE=2025-qatar
@@ -182,6 +202,24 @@ evaluate/season: ## Evaluate model on full season (SEASON=2024 TYPE=qualifying)
 .PHONY: evaluate/baselines
 evaluate/baselines: ## Run baseline comparisons (SEASON=2024)
 	@uv run python -m src.models.baselines $(if $(SEASON),--season $(SEASON),)
+
+##@ Inference
+
+# Usage: make inference/php FEATURES=2025-24_qualifying.json
+.PHONY: inference/php
+inference/php: ## Run PHP ONNX inference (FEATURES=<file.json>)
+	@if [ -z "$(FEATURES)" ]; then \
+		echo "Usage: make inference/php FEATURES=2025-24_qualifying.json"; \
+		echo ""; \
+		echo "Available feature files:"; \
+		ls -1 models/saved/onnx/features/*.json 2>/dev/null | xargs -I {} basename {} || echo "  (none - run: make export/features RACE=2025-24 TYPE=qualifying)"; \
+		exit 1; \
+	fi
+	@docker run --rm -v $(PWD)/models/saved/onnx:/models f1-picks-2025-predictor-php $(FEATURES)
+
+.PHONY: inference/php/build
+inference/php/build: ## Build PHP ONNX inference container
+	@docker build -t f1-picks-2025-predictor-php inference/php
 
 ##@ Cleaning
 
