@@ -618,8 +618,132 @@ class F1DataLoader:
         rename_map = {k: v for k, v in rename_map.items() if k in results.columns}
         results = results.rename(columns=rename_map)
 
+        # Fix missing positions (FastF1/Ergast issue from 2024 onwards)
+        results = self._fix_sprint_qualifying_positions(results)
+
         logger.info(f"Loaded {len(results)} sprint qualifying results")
         return results
+
+    def _fix_sprint_qualifying_positions(self, results: pd.DataFrame) -> pd.DataFrame:
+        """
+        Fix missing Sprint Qualifying positions.
+
+        FastF1/Ergast API stopped providing SQ positions from 2024 onwards.
+        We derive positions from Sprint Race grid_position, which is always
+        available since SQ results set the Sprint Race grid.
+
+        Args:
+            results: DataFrame with SQ results that may have missing positions
+
+        Returns:
+            DataFrame with positions filled in from Sprint Race grid
+        """
+        if results.empty:
+            return results
+
+        # Check if we have missing positions
+        missing_mask = results["position"].isna()
+        if not missing_mask.any():
+            return results
+
+        logger.info(f"Fixing {missing_mask.sum()} missing SQ positions from Sprint Race grid")
+
+        # Get unique sessions with missing positions
+        sessions_to_fix = results.loc[missing_mask, ["year", "round"]].drop_duplicates()
+
+        for _, row in sessions_to_fix.iterrows():
+            year, round_num = int(row["year"]), int(row["round"])
+
+            # Try to get positions from Sprint Race grid
+            sprint_positions = self._get_sq_positions_from_sprint_grid(year, round_num)
+
+            if sprint_positions is None:
+                # Fallback: derive from best lap times in SQ session
+                sprint_positions = self._get_sq_positions_from_lap_times(results, year, round_num)
+
+            if sprint_positions is not None:
+                # Apply positions to results
+                session_mask = (results["year"] == year) & (results["round"] == round_num)
+                for driver, position in sprint_positions.items():
+                    driver_mask = session_mask & (results["driver_code"] == driver)
+                    results.loc[driver_mask, "position"] = position
+
+        return results
+
+    def _get_sq_positions_from_sprint_grid(
+        self, year: int, round_num: int
+    ) -> dict[str, int] | None:
+        """
+        Get SQ positions by reading Sprint Race grid positions.
+
+        The Sprint Race grid is set by SQ results, so grid_position in Sprint
+        equals position in SQ.
+
+        Args:
+            year: Season year
+            round_num: Round number
+
+        Returns:
+            Dict mapping driver_code to position, or None if unavailable
+        """
+        sprint_path = self.sessions_dir / f"{year}_{round_num:02d}_S.parquet"
+
+        if not sprint_path.exists():
+            logger.debug(f"No Sprint Race file for {year} R{round_num}")
+            return None
+
+        try:
+            sprint_df = pd.read_parquet(sprint_path)
+
+            if "grid_position" not in sprint_df.columns:
+                return None
+
+            # Get grid position per driver (first occurrence)
+            grid = sprint_df.groupby("driver_code")["grid_position"].first()
+
+            # Filter out invalid positions
+            grid = grid[grid.notna() & (grid > 0)]
+
+            if grid.empty:
+                return None
+
+            return grid.astype(int).to_dict()
+
+        except Exception as e:
+            logger.warning(f"Error reading Sprint Race for {year} R{round_num}: {e}")
+            return None
+
+    def _get_sq_positions_from_lap_times(
+        self, results: pd.DataFrame, year: int, round_num: int
+    ) -> dict[str, int] | None:
+        """
+        Derive SQ positions from best lap times (fallback method).
+
+        Args:
+            results: DataFrame with SQ results including best_lap_ms
+            year: Season year
+            round_num: Round number
+
+        Returns:
+            Dict mapping driver_code to position based on lap times
+        """
+        session_data = results[(results["year"] == year) & (results["round"] == round_num)].copy()
+
+        if session_data.empty or "best_lap_ms" not in session_data.columns:
+            return None
+
+        # Filter to valid lap times
+        session_data = session_data[session_data["best_lap_ms"].notna()]
+
+        if session_data.empty:
+            return None
+
+        # Sort by lap time and assign positions
+        session_data = session_data.sort_values("best_lap_ms")
+        positions = {row["driver_code"]: i + 1 for i, (_, row) in enumerate(session_data.iterrows())}
+
+        logger.debug(f"Derived SQ positions from lap times for {year} R{round_num}")
+        return positions
 
     def is_sprint_weekend(self, year: int, round_num: int) -> bool:
         """

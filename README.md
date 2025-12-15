@@ -7,13 +7,14 @@ An exploration into using ML to predict the top-3 finishers for my family's F1 p
 - **0 points** if the driver isn't in the top-3
 - **Max 6 points** per session (3 drivers × 2 points)
 
-**The challenge:** Can machine learning beat the simple strategies anyone would use?
+**The challenge:** Can machine learning beat simple strategies anyone would use - like picking whoever's fastest in practice, or assuming the grid order equals finish order?
 
-| Instead of ML, you could just... | Called                |
-| -------------------------------- | --------------------- |
-| Pick whoever's fastest in FP3    | FP3 baseline          |
-| Pick the championship top-3      | Championship baseline |
-| Assume grid order = finish order | Grid baseline         |
+| Session      | Baseline (what anyone would pick)            |
+| ------------ | -------------------------------------------- |
+| Qualifying   | FP3 fastest (or SQ top-3 on sprint weekends) |
+| Race         | Grid position from qualifying                |
+| Sprint Quali | FP1 fastest                                  |
+| Sprint Race  | SQ grid position                             |
 
 If ML can't beat these trivial approaches, it provides no value.
 

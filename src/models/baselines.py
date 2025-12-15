@@ -239,26 +239,66 @@ class PracticeBasedBaseline:
         """
         Predict qualifying top-3 using data loader.
 
+        For standard weekends, uses FP3 (most representative practice session).
+        For sprint weekends (no FP3), falls back to SQ results then FP1.
+
         Args:
             loader: F1DataLoader instance
             year: Season year
             round_num: Round number
 
         Returns:
-            List of 3 driver codes with best FP3 times
+            List of 3 driver codes with best practice times
         """
-
-        # Load FP3 session
+        # Try FP3 first (standard weekends)
         fp3_session = loader.load_session(year, round_num, "FP3")
 
-        if fp3_session.empty:
-            logger.warning(f"No FP3 data for {year} R{round_num}")
-            return ["VER", "HAM", "LEC"]
+        if not fp3_session.empty:
+            fp3_best = fp3_session.groupby("driver_code")["lap_time_ms"].min().reset_index()
+            return self.predict(fp3_best)
 
-        # Get best lap per driver
-        fp3_best = fp3_session.groupby("driver_code")["lap_time_ms"].min().reset_index()
+        # Sprint weekend: FP3 doesn't exist, use SQ results instead
+        # (SQ happens before Q on sprint weekends, so SQ results are available)
+        if loader.is_sprint_weekend(year, round_num):
+            sq_top3 = self._get_sq_top3_for_qualifying_baseline(loader, year, round_num)
+            if sq_top3:
+                logger.info("Using SQ results as qualifying baseline for sprint weekend")
+                return sq_top3
 
-        return self.predict(fp3_best)
+        logger.warning(f"No practice/SQ data for {year} R{round_num}")
+        return ["VER", "HAM", "LEC"]
+
+    def _get_sq_top3_for_qualifying_baseline(
+        self,
+        loader,
+        year: int,
+        round_num: int,
+    ) -> list[str] | None:
+        """
+        Get SQ top-3 for use as qualifying baseline on sprint weekends.
+
+        On sprint weekends, SQ happens before Q, so SQ results are a valid
+        baseline for predicting Q results.
+
+        Args:
+            loader: F1DataLoader instance
+            year: Season year
+            round_num: Round number
+
+        Returns:
+            List of 3 driver codes from SQ, or None if unavailable
+        """
+        # Get SQ positions from Sprint Race grid
+        sprint_session = loader.load_session(year, round_num, "S")
+
+        if not sprint_session.empty and "grid_position" in sprint_session.columns:
+            grid = sprint_session.groupby("driver_code")["grid_position"].first()
+            grid = grid[grid.notna() & (grid > 0)].sort_values()
+
+            if len(grid) >= 3:
+                return grid.head(3).index.tolist()
+
+        return None
 
 
 class FP1BasedBaseline:
@@ -353,6 +393,54 @@ class SprintQualiBasedBaseline:
         top_3 = sq_results[:3]
         logger.info(f"Sprint quali-based prediction: {top_3}")
         return top_3
+
+    def predict_from_loader(
+        self,
+        loader,
+        year: int,
+        round_num: int,
+    ) -> list[str]:
+        """
+        Predict sprint race top-3 using data loader.
+
+        Gets SQ results from Sprint Race grid_position (which is set by SQ).
+        This works even when FastF1/Ergast doesn't provide SQ positions directly.
+
+        Args:
+            loader: F1DataLoader instance
+            year: Season year
+            round_num: Round number
+
+        Returns:
+            List of 3 driver codes in SQ order
+        """
+        # Primary method: Get SQ positions from Sprint Race grid
+        sprint_session = loader.load_session(year, round_num, "S")
+
+        if not sprint_session.empty and "grid_position" in sprint_session.columns:
+            # Sprint Race grid_position equals SQ finishing position
+            grid = sprint_session.groupby("driver_code")["grid_position"].first()
+            grid = grid[grid.notna() & (grid > 0)].sort_values()
+
+            if len(grid) >= 3:
+                top_3 = grid.head(3).index.tolist()
+                logger.info(f"SQ baseline from Sprint grid: {top_3}")
+                return top_3
+
+        # Fallback: Load SQ results directly (works for 2021-2023)
+        sq_results = loader.load_sprint_qualifying_results(min_year=year)
+        sq_results = sq_results[
+            (sq_results["year"] == year) & (sq_results["round"] == round_num)
+        ].copy()
+
+        if not sq_results.empty and sq_results["position"].notna().any():
+            sq_results = sq_results[sq_results["position"].notna()].sort_values("position")
+            top_3 = sq_results.head(3)["driver_code"].tolist()
+            logger.info(f"SQ baseline from SQ results: {top_3}")
+            return top_3
+
+        logger.warning(f"No SQ data for {year} R{round_num}")
+        return ["VER", "HAM", "LEC"]
 
 
 class RaceGridBaseline:
