@@ -220,7 +220,7 @@ def train_model_for_race(
     X = imputer.fit_transform(X)
     feature_names = X.columns.tolist()
 
-    # Train model (without verbose diagnostics)
+    # Train model (matching regular training parameters exactly)
     ranker_class = get_ranker_class(prediction_type)
     model, results = train_ranker_model(
         X,
@@ -228,7 +228,7 @@ def train_model_for_race(
         meta,
         ranker_class=ranker_class,
         objective="lambdarank",
-        cv_splits=3,  # Fewer splits for speed
+        cv_splits=5,  # Same as regular training
     )
 
     training_info = {
@@ -265,6 +265,9 @@ def predict_session(
     """
     Generate prediction for a specific session using trained model.
 
+    This function matches the approach in predict.py's build_prediction_features
+    to ensure backtest predictions match manual train+predict workflow.
+
     Args:
         model: Trained ranker model
         feature_names: Feature columns expected by model
@@ -276,43 +279,94 @@ def predict_session(
     Returns:
         List of 3 predicted driver codes
     """
-    # Build features including the target race
+    # Build features excluding target race (same as predict.py)
     min_year = 2020 if prediction_type not in ["sprint_quali", "sprint_race"] else 2021
 
-    # We need to build features up to and including target race
     X, y, meta = prepare_features(
         min_year=min_year,
         prediction_type=prediction_type,
         for_ranking=True,
-        up_to_race=(year, round_num + 1),  # Include target race
+        up_to_race=(year, round_num),  # Exclude target race (same as predict.py)
     )
 
     if X.empty:
         return []
 
-    # Filter to just the target race
-    target_mask = (meta["year"] == year) & (meta["round"] == round_num)
-    X_target = X.loc[target_mask].copy()
-    meta_target = meta.loc[target_mask].copy()
+    # Apply imputation on all historical data first (same as predict.py)
+    imputer = FeatureImputer()
+    X = imputer.fit_transform(X)
 
-    if X_target.empty:
+    # Get drivers who have data for this session
+    quali = loader.load_qualifying_results(min_year=year)
+    latest_quali = quali.sort_values(["year", "round"]).groupby("driver_code").last().reset_index()
+    driver_codes = latest_quali["driver_code"].tolist()
+
+    # Build prediction features by getting most recent data per driver (same as predict.py)
+    X_pred = pd.DataFrame()
+    meta_pred = pd.DataFrame()
+
+    for driver in driver_codes:
+        driver_mask = meta["driver_code"] == driver
+        if driver_mask.any():
+            # Get most recent data for this driver
+            driver_idx = meta.loc[driver_mask].sort_values(["year", "round"]).index[-1]
+            driver_features = X.loc[[driver_idx]].copy()
+            driver_meta = meta.loc[[driver_idx]].copy()
+
+            # Update with current weekend practice data if available (same as predict.py)
+            practice = loader.load_practice_sessions(min_year=year)
+            weekend_practice = practice[(practice["year"] == year) & (practice["round"] == round_num)]
+
+            driver_practice = weekend_practice[weekend_practice["driver_code"] == driver]
+            if not driver_practice.empty:
+                # Calculate FP rankings
+                fp3_times = weekend_practice[weekend_practice["session_type"] == "Practice 3"]
+                if not fp3_times.empty:
+                    fp3_best = fp3_times.groupby("driver_code")["lap_time_ms"].min()
+                    if driver in fp3_best.index:
+                        driver_fp3_time = fp3_best[driver]
+                        driver_features["current_fp3_best_ms"] = driver_fp3_time
+                        driver_features["current_fp3_rank"] = (fp3_best <= driver_fp3_time).sum()
+                        driver_features["current_fp3_gap_ms"] = driver_fp3_time - fp3_best.min()
+                        driver_features["current_fp3_gap_pct"] = (
+                            (driver_fp3_time - fp3_best.min()) / fp3_best.min() * 100
+                        )
+
+                # Overall practice ranking
+                practice_best = weekend_practice.groupby("driver_code")["lap_time_ms"].min()
+                if driver in practice_best.index:
+                    driver_practice_time = practice_best[driver]
+                    driver_features["current_practice_best_ms"] = driver_practice_time
+                    driver_features["current_practice_rank"] = (
+                        practice_best <= driver_practice_time
+                    ).sum()
+                    driver_features["current_practice_gap_ms"] = (
+                        driver_practice_time - practice_best.min()
+                    )
+                    driver_features["current_practice_gap_pct"] = (
+                        (driver_practice_time - practice_best.min()) / practice_best.min() * 100
+                    )
+
+            X_pred = pd.concat([X_pred, driver_features], ignore_index=True)
+            meta_pred = pd.concat([meta_pred, driver_meta], ignore_index=True)
+
+    if X_pred.empty:
         return []
 
-    # Apply imputation
-    imputer = FeatureImputer()
-    X_target = imputer.fit_transform(X_target)
+    meta_pred["driver_code"] = driver_codes[: len(meta_pred)]
+    driver_codes_final = driver_codes[: len(X_pred)]
 
-    # Align features - add missing, select only needed
+    # Align features - add missing, select only needed (same as predict.py)
     for col in feature_names:
-        if col not in X_target.columns:
-            X_target[col] = 0
-    X_target = X_target[feature_names]
+        if col not in X_pred.columns:
+            X_pred[col] = 0
+    X_pred = X_pred[feature_names]
 
     # Generate prediction
     try:
         pred_result = model.predict_top3(
-            X_target,
-            meta_target["driver_code"].tolist(),
+            X_pred,
+            driver_codes_final,
         )
         return pred_result["top3"]
     except Exception as e:
