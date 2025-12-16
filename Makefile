@@ -203,6 +203,25 @@ evaluate/season: ## Evaluate model on full season (SEASON=2024 TYPE=qualifying)
 evaluate/baselines: ## Run baseline comparisons (SEASON=2024)
 	@uv run python -m src.models.baselines $(if $(SEASON),--season $(SEASON),)
 
+##@ Backtesting
+
+# Usage: make backtest SEASON=2025
+.PHONY: backtest
+backtest: ## Run season backtest (SEASON=2025 TYPE=all CACHE=0 START=1)
+	@if [ -z "$(SEASON)" ]; then \
+		echo "Usage: make backtest SEASON=2025 [TYPE=qualifying] [CACHE=1] [START=round]"; \
+		exit 1; \
+	fi
+	@uv run python -m src.cli.backtest --season $(SEASON) \
+		$(if $(filter 1,$(CACHE)),--cache,) \
+		$(if $(TYPE),--type $(TYPE),) \
+		$(if $(START),--start-round $(START),)
+
+.PHONY: backtest/clean
+backtest/clean: ## Remove cached backtest models
+	@rm -rf models/saved/backtest_cache/
+	@echo "Cleaned backtest model cache"
+
 ##@ Inference
 
 # Usage: make inference/php FEATURES=2025-24_qualifying.json
