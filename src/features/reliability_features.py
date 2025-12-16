@@ -294,10 +294,14 @@ class ReliabilityFeatureExtractor:
             df_aligned["driver_career_dnf"] - df_aligned["session_dnf_rate"]
         ).values
 
-        # Reliability percentile within field
-        features["driver_reliability_percentile"] = df.groupby("session_key")[
-            "is_finished"
-        ].transform(lambda x: x.shift(1) if len(x) > 1 else x)
+        # Reliability percentile within field (rank driver's career finish rate vs others in session)
+        driver_career_finish_rate = df.groupby("driver_code")["is_finished"].transform(
+            lambda x: x.shift(1).expanding().mean()
+        )
+        df_aligned["driver_career_finish_rate"] = driver_career_finish_rate
+        features["driver_reliability_percentile"] = df_aligned.groupby("session_key")[
+            "driver_career_finish_rate"
+        ].rank(pct=True)
 
         return features
 
