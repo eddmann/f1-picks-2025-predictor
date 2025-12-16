@@ -81,24 +81,24 @@ data/sync/%: ## Sync all data for a season (e.g., make data/sync/2024)
 ##@ Model Training
 
 .PHONY: train
-train: ## Train all models (qualifying, race, sprint_quali, sprint_race)
-	@uv run python -m src.cli.retrain --type all
+train: ## Train all models (optional: RACE=2025-24)
+	@uv run python -m src.cli.retrain --type all $(if $(RACE),--race $(RACE),)
 
 .PHONY: train/qualifying
-train/qualifying: ## Train qualifying model only
-	@uv run python -m src.cli.retrain --type qualifying
+train/qualifying: ## Train qualifying model only (optional: RACE=2025-24)
+	@uv run python -m src.cli.retrain --type qualifying $(if $(RACE),--race $(RACE),)
 
 .PHONY: train/race
-train/race: ## Train race model only
-	@uv run python -m src.cli.retrain --type race
+train/race: ## Train race model only (optional: RACE=2025-24)
+	@uv run python -m src.cli.retrain --type race $(if $(RACE),--race $(RACE),)
 
 .PHONY: train/sprint_quali
-train/sprint_quali: ## Train sprint qualifying model only
-	@uv run python -m src.cli.retrain --type sprint_quali
+train/sprint_quali: ## Train sprint qualifying model only (optional: RACE=2025-24)
+	@uv run python -m src.cli.retrain --type sprint_quali $(if $(RACE),--race $(RACE),)
 
 .PHONY: train/sprint_race
-train/sprint_race: ## Train sprint race model only
-	@uv run python -m src.cli.retrain --type sprint_race
+train/sprint_race: ## Train sprint race model only (optional: RACE=2025-24)
+	@uv run python -m src.cli.retrain --type sprint_race $(if $(RACE),--race $(RACE),)
 
 .PHONY: train/status
 train/status: ## Show training data status

@@ -281,16 +281,19 @@ def build_prediction_features(
     if prediction_type in ["sprint_quali", "sprint_race"]:
         min_year = 2021  # Sprint format started in 2021
 
-    # Build all historical features
-    X, y, meta = pipeline.build_features(min_year=min_year, for_ranking=True)
+    # Get the target session for prediction
+    year = race_info["year"]
+    round_num = race_info["round"]
+
+    # Build historical features with temporal cutoff (exclude target race and beyond)
+    up_to_race = (year, round_num)
+    X, y, meta = pipeline.build_features(
+        min_year=min_year, up_to_race=up_to_race, for_ranking=True
+    )
 
     # Apply imputation
     imputer = FeatureImputer()
     X = imputer.fit_transform(X)
-
-    # Get the target session for prediction
-    year = race_info["year"]
-    round_num = race_info["round"]
 
     # Check if we have FP data for this weekend
     practice = loader.load_practice_sessions(min_year=year)
@@ -314,66 +317,53 @@ def build_prediction_features(
     latest_quali = quali.sort_values(["year", "round"]).groupby("driver_code").last().reset_index()
     driver_codes = latest_quali["driver_code"].tolist()
 
-    # Filter to target race weekend if we have the data
-    target_session_key = f"{year}_{round_num:02d}_Q"
+    # Build features for prediction using most recent historical data per driver
+    X_pred = pd.DataFrame()
+    meta_pred = pd.DataFrame()
 
-    if target_session_key in meta["session_key"].values:
-        # We have qualifying data for this race - use those features
-        target_mask = meta["session_key"] == target_session_key
-        X_pred = X.loc[target_mask].copy()
-        meta_pred = meta.loc[target_mask].copy()
-        driver_codes = meta_pred["driver_code"].tolist()
-    else:
-        # Need to build features for upcoming race
-        # Use most recent data for each driver
-        X_pred = pd.DataFrame()
-        meta_pred = pd.DataFrame()
+    for driver in driver_codes:
+        driver_mask = meta["driver_code"] == driver
+        if driver_mask.any():
+            # Get most recent data for this driver
+            driver_idx = meta.loc[driver_mask].sort_values(["year", "round"]).index[-1]
+            driver_features = X.loc[[driver_idx]].copy()
+            driver_meta = meta.loc[[driver_idx]].copy()
 
-        for driver in driver_codes:
-            driver_mask = meta["driver_code"] == driver
-            if driver_mask.any():
-                # Get most recent data for this driver
-                driver_idx = meta.loc[driver_mask].sort_values(["year", "round"]).index[-1]
-                driver_features = X.loc[[driver_idx]].copy()
-                driver_meta = meta.loc[[driver_idx]].copy()
-
-                # Update with current weekend FP data if available
-                driver_practice = weekend_practice[weekend_practice["driver_code"] == driver]
-                if not driver_practice.empty:
-                    # Calculate FP rankings
-                    fp3_times = weekend_practice[weekend_practice["session_type"] == "Practice 3"]
-                    if not fp3_times.empty:
-                        fp3_best = fp3_times.groupby("driver_code")["lap_time_ms"].min()
-                        if driver in fp3_best.index:
-                            driver_fp3_time = fp3_best[driver]
-                            driver_features["current_fp3_best_ms"] = driver_fp3_time
-                            driver_features["current_fp3_rank"] = (
-                                fp3_best <= driver_fp3_time
-                            ).sum()
-                            driver_features["current_fp3_gap_ms"] = driver_fp3_time - fp3_best.min()
-                            driver_features["current_fp3_gap_pct"] = (
-                                (driver_fp3_time - fp3_best.min()) / fp3_best.min() * 100
-                            )
-
-                    # Overall practice ranking
-                    practice_best = weekend_practice.groupby("driver_code")["lap_time_ms"].min()
-                    if driver in practice_best.index:
-                        driver_practice_time = practice_best[driver]
-                        driver_features["current_practice_best_ms"] = driver_practice_time
-                        driver_features["current_practice_rank"] = (
-                            practice_best <= driver_practice_time
-                        ).sum()
-                        driver_features["current_practice_gap_ms"] = (
-                            driver_practice_time - practice_best.min()
-                        )
-                        driver_features["current_practice_gap_pct"] = (
-                            (driver_practice_time - practice_best.min()) / practice_best.min() * 100
+            # Update with current weekend FP data if available
+            driver_practice = weekend_practice[weekend_practice["driver_code"] == driver]
+            if not driver_practice.empty:
+                # Calculate FP rankings
+                fp3_times = weekend_practice[weekend_practice["session_type"] == "Practice 3"]
+                if not fp3_times.empty:
+                    fp3_best = fp3_times.groupby("driver_code")["lap_time_ms"].min()
+                    if driver in fp3_best.index:
+                        driver_fp3_time = fp3_best[driver]
+                        driver_features["current_fp3_best_ms"] = driver_fp3_time
+                        driver_features["current_fp3_rank"] = (fp3_best <= driver_fp3_time).sum()
+                        driver_features["current_fp3_gap_ms"] = driver_fp3_time - fp3_best.min()
+                        driver_features["current_fp3_gap_pct"] = (
+                            (driver_fp3_time - fp3_best.min()) / fp3_best.min() * 100
                         )
 
-                X_pred = pd.concat([X_pred, driver_features], ignore_index=True)
-                meta_pred = pd.concat([meta_pred, driver_meta], ignore_index=True)
+                # Overall practice ranking
+                practice_best = weekend_practice.groupby("driver_code")["lap_time_ms"].min()
+                if driver in practice_best.index:
+                    driver_practice_time = practice_best[driver]
+                    driver_features["current_practice_best_ms"] = driver_practice_time
+                    driver_features["current_practice_rank"] = (
+                        practice_best <= driver_practice_time
+                    ).sum()
+                    driver_features["current_practice_gap_ms"] = (
+                        driver_practice_time - practice_best.min()
+                    )
+                    driver_features["current_practice_gap_pct"] = (
+                        (driver_practice_time - practice_best.min()) / practice_best.min() * 100
+                    )
 
-        meta_pred["driver_code"] = driver_codes[: len(meta_pred)]
+            X_pred = pd.concat([X_pred, driver_features], ignore_index=True)
+            meta_pred = pd.concat([meta_pred, driver_meta], ignore_index=True)
+
+    meta_pred["driver_code"] = driver_codes[: len(meta_pred)]
 
     return X_pred, meta_pred, driver_codes[: len(X_pred)]
 

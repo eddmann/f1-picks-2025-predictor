@@ -37,10 +37,57 @@ from src.models.sprint_race import SprintRaceLGBMRanker
 logger = logging.getLogger(__name__)
 
 
+def parse_race_id(race_id: str, loader: F1DataLoader) -> tuple[int, int]:
+    """
+    Parse a race ID string to (year, round) tuple.
+
+    Args:
+        race_id: Race ID like "2025-24" or "2025-qatar"
+        loader: F1DataLoader instance for looking up circuit names
+
+    Returns:
+        Tuple of (year, round)
+
+    Raises:
+        ValueError: If race_id format is invalid or race cannot be found
+    """
+    parts = race_id.split("-", 1)
+    if len(parts) < 2:
+        raise ValueError(f"Invalid race_id format: '{race_id}'. Use format: YYYY-round or YYYY-circuit")
+
+    try:
+        year = int(parts[0])
+    except ValueError as e:
+        raise ValueError(f"Invalid year in race_id: '{parts[0]}'") from e
+
+    round_or_name = parts[1]
+
+    # Try to parse as round number
+    try:
+        round_num = int(round_or_name)
+        return (year, round_num)
+    except ValueError:
+        pass
+
+    # Try to find by circuit name
+    events = loader.load_events()
+    year_events = events[events["year"] == year]
+    match = year_events[
+        year_events["circuit"].str.lower().str.contains(round_or_name.lower().replace("-", " "))
+    ]
+
+    if match.empty:
+        raise ValueError(f"Could not find race: {race_id}")
+
+    round_num = int(match.iloc[0]["round"])
+    return (year, round_num)
+
+
 def prepare_features(
     min_year: int | None = None,
     prediction_type: str = "qualifying",
     for_ranking: bool = True,
+    up_to_race: tuple[int, int] | None = None,
 ) -> tuple[pd.DataFrame, pd.Series, pd.DataFrame]:
     """
     Prepare features and labels for training using the appropriate pipeline.
@@ -49,6 +96,7 @@ def prepare_features(
         min_year: Minimum year to include in training (default: from config)
         prediction_type: Type of prediction (qualifying, sprint_quali, sprint_race, race)
         for_ranking: If True, returns position as target; if False, returns is_top3
+        up_to_race: Optional (year, round) tuple to filter data up to but not including
 
     Returns:
         Tuple of (features DataFrame, labels Series, metadata DataFrame)
@@ -73,7 +121,9 @@ def prepare_features(
     else:
         raise ValueError(f"Unknown prediction type: {prediction_type}")
 
-    X, y, meta = pipeline.build_features(min_year=min_year, for_ranking=for_ranking)
+    X, y, meta = pipeline.build_features(
+        min_year=min_year, up_to_race=up_to_race, for_ranking=for_ranking
+    )
 
     logger.info(
         f"Prepared {len(X)} samples with {len(X.columns)} features for {prediction_type} prediction"
@@ -125,6 +175,7 @@ def train_ranker_for_type(
     prediction_type: str,
     args,
     min_year: int,
+    up_to_race: tuple[int, int] | None = None,
 ) -> bool:
     """
     Train a ranker model for a specific prediction type.
@@ -133,6 +184,7 @@ def train_ranker_for_type(
         prediction_type: Type of prediction (qualifying, sprint_quali, sprint_race, race)
         args: CLI arguments
         min_year: Minimum year for training data
+        up_to_race: Optional (year, round) tuple to filter data up to but not including
 
     Returns:
         True if training succeeded, False otherwise
@@ -150,6 +202,7 @@ def train_ranker_for_type(
         min_year=min_year,
         prediction_type=prediction_type,
         for_ranking=True,
+        up_to_race=up_to_race,
     )
 
     if X_rank.empty:
@@ -222,6 +275,7 @@ def train_ranker_for_type(
         "cv_std": results["cv_std"],
         "features": feature_names_rank,
         "min_year": min_year,
+        "up_to_race": f"{up_to_race[0]}-{up_to_race[1]}" if up_to_race else None,
         "data_source": "fastf1",
     }
     save_model(model, model_path, metadata)
@@ -262,6 +316,13 @@ def retrain_model(args):
     min_year = args.min_year or 2020
     models_trained = []
 
+    # Parse race ID if provided
+    up_to_race = None
+    if args.race:
+        loader = F1DataLoader(config.data.data_dir)
+        up_to_race = parse_race_id(args.race, loader)
+        print(f"Training with data up to (not including) {up_to_race[0]} R{up_to_race[1]}")
+
     # Train rankers for each prediction type
     for prediction_type in prediction_types:
         print(f"\n{'=' * 60}")
@@ -273,7 +334,7 @@ def retrain_model(args):
             effective_min_year = max(min_year, 2021)
             print(f"(Using min_year={effective_min_year} for sprint data)")
 
-        if train_ranker_for_type(prediction_type, args, effective_min_year):
+        if train_ranker_for_type(prediction_type, args, effective_min_year, up_to_race):
             models_trained.append(f"{prediction_type}_ranker")
 
     print("\n" + "=" * 60)
@@ -348,6 +409,12 @@ def main():
         help="Prediction type to train (default: qualifying, use 'all' for all types)",
     )
     parser.add_argument("--min-year", type=int, default=2020, help="Minimum year for training data")
+    parser.add_argument(
+        "--race",
+        type=str,
+        default=None,
+        help="Train with data up to (but not including) this race (e.g., 2025-24 or 2025-qatar)",
+    )
     parser.add_argument(
         "--objective",
         choices=["lambdarank", "rank_xendcg"],

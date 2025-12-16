@@ -136,6 +136,7 @@ class BaseFeaturePipeline(ABC):
     def build_features(
         self,
         min_year: int = 2020,
+        up_to_race: tuple[int, int] | None = None,
         windows: list[int] | None = None,
         for_ranking: bool = True,
     ) -> tuple[pd.DataFrame, pd.Series, pd.DataFrame]:
@@ -146,6 +147,7 @@ class BaseFeaturePipeline(ABC):
 
         Args:
             min_year: Minimum year to include
+            up_to_race: Optional (year, round) tuple to filter data up to but not including
             windows: Rolling window sizes for temporal features (default: [3, 5, 10])
             for_ranking: If True, returns position as target; if False, returns is_top3
 
@@ -165,8 +167,29 @@ class BaseFeaturePipeline(ABC):
             logger.warning(f"No {self.session_type} results found")
             return pd.DataFrame(), pd.Series(dtype=float), pd.DataFrame()
 
+        # Filter to sessions before target race if specified
+        if up_to_race:
+            target_year, target_round = up_to_race
+            original_count = len(target_results)
+            target_results = target_results[
+                (target_results["year"] < target_year)
+                | ((target_results["year"] == target_year) & (target_results["round"] < target_round))
+            ]
+            logger.info(
+                f"Filtered to {len(target_results)} sessions before "
+                f"{target_year} R{target_round} (from {original_count})"
+            )
+
         # Load common data
         events = self.loader.load_events(min_year=min_year)
+
+        # Filter events if up_to_race specified
+        if up_to_race:
+            target_year, target_round = up_to_race
+            events = events[
+                (events["year"] < target_year)
+                | ((events["year"] == target_year) & (events["round"] < target_round))
+            ]
 
         # Build base dataframe from target results
         df = self._build_base_dataframe(target_results, events)
