@@ -1,0 +1,2277 @@
+{
+  "season": 2025,
+  "generated_at": "2025-12-16T16:47:31.514925",
+  "summary": {
+    "total_races": 24,
+    "session_metrics": {
+      "qualifying": {
+        "n_sessions": 24,
+        "game_points_mean": 1.9166666666666667,
+        "game_points_std": 1.2219065248845982,
+        "game_points_total": 46,
+        "game_points_max_possible": 144,
+        "ndcg_mean": 0.4292687752120578,
+        "map_mean": 0.38194444444444436,
+        "top3_inclusion_mean": 0.47222222222222215,
+        "exact_match_mean": 0.16666666666666666,
+        "distribution": {
+          "0": 3,
+          "1": 6,
+          "2": 9,
+          "3": 2,
+          "4": 4,
+          "5": 0,
+          "6": 0
+        }
+      },
+      "sprint_quali": {
+        "n_sessions": 6,
+        "game_points_mean": 1.3333333333333333,
+        "game_points_std": 1.3743685418725535,
+        "game_points_total": 8,
+        "game_points_max_possible": 36,
+        "ndcg_mean": 0.3074981705588662,
+        "map_mean": 0.324074074074074,
+        "top3_inclusion_mean": 0.38888888888888884,
+        "exact_match_mean": 0.05555555555555555,
+        "distribution": {
+          "0": 3,
+          "1": 0,
+          "2": 1,
+          "3": 2,
+          "4": 0,
+          "5": 0,
+          "6": 0
+        }
+      },
+      "sprint_race": {
+        "n_sessions": 6,
+        "game_points_mean": 0.8333333333333334,
+        "game_points_std": 0.8975274678557505,
+        "game_points_total": 5,
+        "game_points_max_possible": 36,
+        "ndcg_mean": 0.2587500831564151,
+        "map_mean": 0.1851851851851852,
+        "top3_inclusion_mean": 0.2222222222222222,
+        "exact_match_mean": 0.05555555555555555,
+        "distribution": {
+          "0": 3,
+          "1": 1,
+          "2": 2,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0
+        }
+      },
+      "race": {
+        "n_sessions": 24,
+        "game_points_mean": 1.875,
+        "game_points_std": 1.562916611125921,
+        "game_points_total": 45,
+        "game_points_max_possible": 144,
+        "ndcg_mean": 0.46843660606853693,
+        "map_mean": 0.37499999999999994,
+        "top3_inclusion_mean": 0.4444444444444444,
+        "exact_match_mean": 0.18055555555555555,
+        "distribution": {
+          "0": 5,
+          "1": 6,
+          "2": 7,
+          "3": 1,
+          "4": 4,
+          "5": 0,
+          "6": 1
+        }
+      }
+    },
+    "vs_baseline": {
+      "qualifying": {
+        "FP3/SQ": {
+          "mean": 2.6666666666666665,
+          "total": 64
+        }
+      },
+      "sprint_quali": {
+        "FP1": {
+          "mean": 3.0,
+          "total": 18
+        }
+      },
+      "sprint_race": {
+        "SQ Grid": {
+          "mean": 3.8333333333333335,
+          "total": 23
+        }
+      },
+      "race": {
+        "Q Grid": {
+          "mean": 3.6666666666666665,
+          "total": 88
+        }
+      }
+    }
+  },
+  "races": [
+    {
+      "year": 2025,
+      "round": 1,
+      "circuit": "Melbourne",
+      "event_name": "Australian Grand Prix",
+      "is_sprint_weekend": false,
+      "training_samples": {
+        "qualifying": 1136,
+        "race": 1117
+      },
+      "training_features": {
+        "qualifying": 299,
+        "race": 331
+      },
+      "session_results": {
+        "qualifying": {
+          "driver_codes": [
+            "LAW",
+            "PIA",
+            "BOR"
+          ],
+          "actual_codes": [
+            "NOR",
+            "PIA",
+            "VER"
+          ],
+          "game_points": 2,
+          "ndcg_3": 0.26499301486112564,
+          "map_3": 0.16666666666666666,
+          "top3_inclusion": 0.3333333333333333,
+          "exact_match_rate": 0.3333333333333333
+        },
+        "race": {
+          "driver_codes": [
+            "PIA",
+            "LAW",
+            "BOR"
+          ],
+          "actual_codes": [
+            "NOR",
+            "VER",
+            "RUS"
+          ],
+          "game_points": 0,
+          "ndcg_3": 0.0,
+          "map_3": 0.0,
+          "top3_inclusion": 0.0,
+          "exact_match_rate": 0.0
+        }
+      },
+      "baseline_results": {
+        "qualifying": {
+          "FP3/SQ": {
+            "name": "FP3/SQ",
+            "driver_codes": [
+              "PIA",
+              "RUS",
+              "VER"
+            ],
+            "game_points": 3
+          }
+        },
+        "race": {
+          "Q Grid": {
+            "name": "Q Grid",
+            "driver_codes": [
+              "NOR",
+              "PIA",
+              "VER"
+            ],
+            "game_points": 3
+          }
+        }
+      }
+    },
+    {
+      "year": 2025,
+      "round": 2,
+      "circuit": "Shanghai",
+      "event_name": "Chinese Grand Prix",
+      "is_sprint_weekend": true,
+      "training_samples": {
+        "sprint_quali": 100,
+        "sprint_race": 159,
+        "qualifying": 1156,
+        "race": 1137
+      },
+      "training_features": {
+        "sprint_quali": 254,
+        "sprint_race": 259,
+        "qualifying": 299,
+        "race": 331
+      },
+      "session_results": {
+        "sprint_quali": {
+          "driver_codes": [
+            "ALB",
+            "ALO",
+            "ANT"
+          ],
+          "actual_codes": [
+            "HAM",
+            "VER",
+            "PIA"
+          ],
+          "game_points": 0,
+          "ndcg_3": 0.0,
+          "map_3": 0.0,
+          "top3_inclusion": 0.0,
+          "exact_match_rate": 0.0
+        },
+        "sprint_race": {
+          "driver_codes": [
+            "NOR",
+            "HAD",
+            "DOO"
+          ],
+          "actual_codes": [
+            "HAM",
+            "PIA",
+            "VER"
+          ],
+          "game_points": 0,
+          "ndcg_3": 0.0,
+          "map_3": 0.0,
+          "top3_inclusion": 0.0,
+          "exact_match_rate": 0.0
+        },
+        "qualifying": {
+          "driver_codes": [
+            "LEC",
+            "OCO",
+            "TSU"
+          ],
+          "actual_codes": [
+            "PIA",
+            "RUS",
+            "NOR"
+          ],
+          "game_points": 0,
+          "ndcg_3": 0.0,
+          "map_3": 0.0,
+          "top3_inclusion": 0.0,
+          "exact_match_rate": 0.0
+        },
+        "race": {
+          "driver_codes": [
+            "LEC",
+            "TSU",
+            "OCO"
+          ],
+          "actual_codes": [
+            "PIA",
+            "NOR",
+            "RUS"
+          ],
+          "game_points": 0,
+          "ndcg_3": 0.0,
+          "map_3": 0.0,
+          "top3_inclusion": 0.0,
+          "exact_match_rate": 0.0
+        }
+      },
+      "baseline_results": {
+        "sprint_quali": {
+          "FP1": {
+            "name": "FP1",
+            "driver_codes": [
+              "NOR",
+              "LEC",
+              "PIA"
+            ],
+            "game_points": 2
+          }
+        },
+        "sprint_race": {
+          "SQ Grid": {
+            "name": "SQ Grid",
+            "driver_codes": [
+              "HAM",
+              "VER",
+              "PIA"
+            ],
+            "game_points": 4
+          }
+        },
+        "qualifying": {
+          "FP3/SQ": {
+            "name": "FP3/SQ",
+            "driver_codes": [
+              "HAM",
+              "VER",
+              "PIA"
+            ],
+            "game_points": 1
+          }
+        },
+        "race": {
+          "Q Grid": {
+            "name": "Q Grid",
+            "driver_codes": [
+              "PIA",
+              "RUS",
+              "NOR"
+            ],
+            "game_points": 4
+          }
+        }
+      }
+    },
+    {
+      "year": 2025,
+      "round": 3,
+      "circuit": "Suzuka",
+      "event_name": "Japanese Grand Prix",
+      "is_sprint_weekend": false,
+      "training_samples": {
+        "qualifying": 1176,
+        "race": 1157
+      },
+      "training_features": {
+        "qualifying": 299,
+        "race": 331
+      },
+      "session_results": {
+        "qualifying": {
+          "driver_codes": [
+            "OCO",
+            "PIA",
+            "LEC"
+          ],
+          "actual_codes": [
+            "VER",
+            "NOR",
+            "PIA"
+          ],
+          "game_points": 1,
+          "ndcg_3": 0.13249650743056282,
+          "map_3": 0.16666666666666666,
+          "top3_inclusion": 0.3333333333333333,
+          "exact_match_rate": 0.0
+        },
+        "race": {
+          "driver_codes": [
+            "OCO",
+            "LEC",
+            "TSU"
+          ],
+          "actual_codes": [
+            "VER",
+            "NOR",
+            "PIA"
+          ],
+          "game_points": 0,
+          "ndcg_3": 0.0,
+          "map_3": 0.0,
+          "top3_inclusion": 0.0,
+          "exact_match_rate": 0.0
+        }
+      },
+      "baseline_results": {
+        "qualifying": {
+          "FP3/SQ": {
+            "name": "FP3/SQ",
+            "driver_codes": [
+              "NOR",
+              "PIA",
+              "RUS"
+            ],
+            "game_points": 2
+          }
+        },
+        "race": {
+          "Q Grid": {
+            "name": "Q Grid",
+            "driver_codes": [
+              "VER",
+              "NOR",
+              "PIA"
+            ],
+            "game_points": 6
+          }
+        }
+      }
+    },
+    {
+      "year": 2025,
+      "round": 4,
+      "circuit": "Sakhir",
+      "event_name": "Bahrain Grand Prix",
+      "is_sprint_weekend": false,
+      "training_samples": {
+        "qualifying": 1196,
+        "race": 1177
+      },
+      "training_features": {
+        "qualifying": 299,
+        "race": 331
+      },
+      "session_results": {
+        "qualifying": {
+          "driver_codes": [
+            "TSU",
+            "LEC",
+            "OCO"
+          ],
+          "actual_codes": [
+            "PIA",
+            "RUS",
+            "LEC"
+          ],
+          "game_points": 1,
+          "ndcg_3": 0.13249650743056282,
+          "map_3": 0.16666666666666666,
+          "top3_inclusion": 0.3333333333333333,
+          "exact_match_rate": 0.0
+        },
+        "race": {
+          "driver_codes": [
+            "TSU",
+            "LEC",
+            "OCO"
+          ],
+          "actual_codes": [
+            "PIA",
+            "RUS",
+            "NOR"
+          ],
+          "game_points": 0,
+          "ndcg_3": 0.0,
+          "map_3": 0.0,
+          "top3_inclusion": 0.0,
+          "exact_match_rate": 0.0
+        }
+      },
+      "baseline_results": {
+        "qualifying": {
+          "FP3/SQ": {
+            "name": "FP3/SQ",
+            "driver_codes": [
+              "PIA",
+              "NOR",
+              "LEC"
+            ],
+            "game_points": 4
+          }
+        },
+        "race": {
+          "Q Grid": {
+            "name": "Q Grid",
+            "driver_codes": [
+              "PIA",
+              "RUS",
+              "LEC"
+            ],
+            "game_points": 4
+          }
+        }
+      }
+    },
+    {
+      "year": 2025,
+      "round": 5,
+      "circuit": "Jeddah",
+      "event_name": "Saudi Arabian Grand Prix",
+      "is_sprint_weekend": false,
+      "training_samples": {
+        "qualifying": 1216,
+        "race": 1197
+      },
+      "training_features": {
+        "qualifying": 299,
+        "race": 331
+      },
+      "session_results": {
+        "qualifying": {
+          "driver_codes": [
+            "OCO",
+            "PIA",
+            "LAW"
+          ],
+          "actual_codes": [
+            "VER",
+            "PIA",
+            "RUS"
+          ],
+          "game_points": 2,
+          "ndcg_3": 0.26499301486112564,
+          "map_3": 0.16666666666666666,
+          "top3_inclusion": 0.3333333333333333,
+          "exact_match_rate": 0.3333333333333333
+        },
+        "race": {
+          "driver_codes": [
+            "OCO",
+            "PIA",
+            "LEC"
+          ],
+          "actual_codes": [
+            "PIA",
+            "VER",
+            "LEC"
+          ],
+          "game_points": 3,
+          "ndcg_3": 0.5024905201686705,
+          "map_3": 0.38888888888888884,
+          "top3_inclusion": 0.6666666666666666,
+          "exact_match_rate": 0.3333333333333333
+        }
+      },
+      "baseline_results": {
+        "qualifying": {
+          "FP3/SQ": {
+            "name": "FP3/SQ",
+            "driver_codes": [
+              "NOR",
+              "PIA",
+              "RUS"
+            ],
+            "game_points": 4
+          }
+        },
+        "race": {
+          "Q Grid": {
+            "name": "Q Grid",
+            "driver_codes": [
+              "VER",
+              "PIA",
+              "RUS"
+            ],
+            "game_points": 2
+          }
+        }
+      }
+    },
+    {
+      "year": 2025,
+      "round": 6,
+      "circuit": "Miami Gardens",
+      "event_name": "Miami Grand Prix",
+      "is_sprint_weekend": true,
+      "training_samples": {
+        "sprint_quali": 120,
+        "sprint_race": 179,
+        "qualifying": 1236,
+        "race": 1217
+      },
+      "training_features": {
+        "sprint_quali": 254,
+        "sprint_race": 259,
+        "qualifying": 299,
+        "race": 331
+      },
+      "session_results": {
+        "sprint_quali": {
+          "driver_codes": [
+            "HAD",
+            "TSU",
+            "OCO"
+          ],
+          "actual_codes": [
+            "ANT",
+            "PIA",
+            "NOR"
+          ],
+          "game_points": 0,
+          "ndcg_3": 0.0,
+          "map_3": 0.0,
+          "top3_inclusion": 0.0,
+          "exact_match_rate": 0.0
+        },
+        "sprint_race": {
+          "driver_codes": [
+            "TSU",
+            "HAD",
+            "OCO"
+          ],
+          "actual_codes": [
+            "NOR",
+            "PIA",
+            "HAM"
+          ],
+          "game_points": 0,
+          "ndcg_3": 0.0,
+          "map_3": 0.0,
+          "top3_inclusion": 0.0,
+          "exact_match_rate": 0.0
+        },
+        "qualifying": {
+          "driver_codes": [
+            "TSU",
+            "OCO",
+            "PIA"
+          ],
+          "actual_codes": [
+            "VER",
+            "NOR",
+            "ANT"
+          ],
+          "game_points": 0,
+          "ndcg_3": 0.0,
+          "map_3": 0.0,
+          "top3_inclusion": 0.0,
+          "exact_match_rate": 0.0
+        },
+        "race": {
+          "driver_codes": [
+            "TSU",
+            "OCO",
+            "PIA"
+          ],
+          "actual_codes": [
+            "PIA",
+            "NOR",
+            "RUS"
+          ],
+          "game_points": 1,
+          "ndcg_3": 0.31500299363094614,
+          "map_3": 0.1111111111111111,
+          "top3_inclusion": 0.3333333333333333,
+          "exact_match_rate": 0.0
+        }
+      },
+      "baseline_results": {
+        "sprint_quali": {
+          "FP1": {
+            "name": "FP1",
+            "driver_codes": [
+              "PIA",
+              "LEC",
+              "VER"
+            ],
+            "game_points": 1
+          }
+        },
+        "sprint_race": {
+          "SQ Grid": {
+            "name": "SQ Grid",
+            "driver_codes": [
+              "ANT",
+              "PIA",
+              "NOR"
+            ],
+            "game_points": 3
+          }
+        },
+        "qualifying": {
+          "FP3/SQ": {
+            "name": "FP3/SQ",
+            "driver_codes": [
+              "ANT",
+              "PIA",
+              "NOR"
+            ],
+            "game_points": 2
+          }
+        },
+        "race": {
+          "Q Grid": {
+            "name": "Q Grid",
+            "driver_codes": [
+              "VER",
+              "NOR",
+              "ANT"
+            ],
+            "game_points": 2
+          }
+        }
+      }
+    },
+    {
+      "year": 2025,
+      "round": 7,
+      "circuit": "Imola",
+      "event_name": "Emilia Romagna Grand Prix",
+      "is_sprint_weekend": false,
+      "training_samples": {
+        "qualifying": 1256,
+        "race": 1237
+      },
+      "training_features": {
+        "qualifying": 299,
+        "race": 331
+      },
+      "session_results": {
+        "qualifying": {
+          "driver_codes": [
+            "TSU",
+            "LEC",
+            "ANT"
+          ],
+          "actual_codes": [
+            "PIA",
+            "VER",
+            "RUS"
+          ],
+          "game_points": 0,
+          "ndcg_3": 0.0,
+          "map_3": 0.0,
+          "top3_inclusion": 0.0,
+          "exact_match_rate": 0.0
+        },
+        "race": {
+          "driver_codes": [
+            "OCO",
+            "TSU",
+            "LEC"
+          ],
+          "actual_codes": [
+            "VER",
+            "NOR",
+            "PIA"
+          ],
+          "game_points": 0,
+          "ndcg_3": 0.0,
+          "map_3": 0.0,
+          "top3_inclusion": 0.0,
+          "exact_match_rate": 0.0
+        }
+      },
+      "baseline_results": {
+        "qualifying": {
+          "FP3/SQ": {
+            "name": "FP3/SQ",
+            "driver_codes": [
+              "NOR",
+              "PIA",
+              "VER"
+            ],
+            "game_points": 2
+          }
+        },
+        "race": {
+          "Q Grid": {
+            "name": "Q Grid",
+            "driver_codes": [
+              "PIA",
+              "VER",
+              "RUS"
+            ],
+            "game_points": 2
+          }
+        }
+      }
+    },
+    {
+      "year": 2025,
+      "round": 8,
+      "circuit": "Monaco",
+      "event_name": "Monaco Grand Prix",
+      "is_sprint_weekend": false,
+      "training_samples": {
+        "qualifying": 1276,
+        "race": 1257
+      },
+      "training_features": {
+        "qualifying": 299,
+        "race": 331
+      },
+      "session_results": {
+        "qualifying": {
+          "driver_codes": [
+            "PIA",
+            "VER",
+            "RUS"
+          ],
+          "actual_codes": [
+            "NOR",
+            "LEC",
+            "PIA"
+          ],
+          "game_points": 1,
+          "ndcg_3": 0.21000199575396408,
+          "map_3": 0.3333333333333333,
+          "top3_inclusion": 0.3333333333333333,
+          "exact_match_rate": 0.0
+        },
+        "race": {
+          "driver_codes": [
+            "PIA",
+            "VER",
+            "NOR"
+          ],
+          "actual_codes": [
+            "NOR",
+            "LEC",
+            "PIA"
+          ],
+          "game_points": 2,
+          "ndcg_3": 0.5250049893849101,
+          "map_3": 0.5555555555555555,
+          "top3_inclusion": 0.6666666666666666,
+          "exact_match_rate": 0.0
+        }
+      },
+      "baseline_results": {
+        "qualifying": {
+          "FP3/SQ": {
+            "name": "FP3/SQ",
+            "driver_codes": [
+              "LEC",
+              "VER",
+              "NOR"
+            ],
+            "game_points": 2
+          }
+        },
+        "race": {
+          "Q Grid": {
+            "name": "Q Grid",
+            "driver_codes": [
+              "NOR",
+              "LEC",
+              "PIA"
+            ],
+            "game_points": 6
+          }
+        }
+      }
+    },
+    {
+      "year": 2025,
+      "round": 9,
+      "circuit": "Barcelona",
+      "event_name": "Spanish Grand Prix",
+      "is_sprint_weekend": false,
+      "training_samples": {
+        "qualifying": 1296,
+        "race": 1277
+      },
+      "training_features": {
+        "qualifying": 299,
+        "race": 331
+      },
+      "session_results": {
+        "qualifying": {
+          "driver_codes": [
+            "NOR",
+            "PIA",
+            "LEC"
+          ],
+          "actual_codes": [
+            "PIA",
+            "NOR",
+            "VER"
+          ],
+          "game_points": 2,
+          "ndcg_3": 0.8174935137996165,
+          "map_3": 0.6666666666666666,
+          "top3_inclusion": 0.6666666666666666,
+          "exact_match_rate": 0.0
+        },
+        "race": {
+          "driver_codes": [
+            "NOR",
+            "PIA",
+            "LEC"
+          ],
+          "actual_codes": [
+            "PIA",
+            "NOR",
+            "LEC"
+          ],
+          "game_points": 4,
+          "ndcg_3": 0.9224945116765986,
+          "map_3": 1.0,
+          "top3_inclusion": 1.0,
+          "exact_match_rate": 0.3333333333333333
+        }
+      },
+      "baseline_results": {
+        "qualifying": {
+          "FP3/SQ": {
+            "name": "FP3/SQ",
+            "driver_codes": [
+              "PIA",
+              "NOR",
+              "LEC"
+            ],
+            "game_points": 4
+          }
+        },
+        "race": {
+          "Q Grid": {
+            "name": "Q Grid",
+            "driver_codes": [
+              "PIA",
+              "NOR",
+              "VER"
+            ],
+            "game_points": 4
+          }
+        }
+      }
+    },
+    {
+      "year": 2025,
+      "round": 10,
+      "circuit": "Montr\u00e9al",
+      "event_name": "Canadian Grand Prix",
+      "is_sprint_weekend": false,
+      "training_samples": {
+        "qualifying": 1316,
+        "race": 1296
+      },
+      "training_features": {
+        "qualifying": 299,
+        "race": 331
+      },
+      "session_results": {
+        "qualifying": {
+          "driver_codes": [
+            "NOR",
+            "VER",
+            "PIA"
+          ],
+          "actual_codes": [
+            "RUS",
+            "VER",
+            "PIA"
+          ],
+          "game_points": 4,
+          "ndcg_3": 0.36999401273810767,
+          "map_3": 0.38888888888888884,
+          "top3_inclusion": 0.6666666666666666,
+          "exact_match_rate": 0.6666666666666666
+        },
+        "race": {
+          "driver_codes": [
+            "PIA",
+            "NOR",
+            "VER"
+          ],
+          "actual_codes": [
+            "RUS",
+            "VER",
+            "ANT"
+          ],
+          "game_points": 1,
+          "ndcg_3": 0.21000199575396408,
+          "map_3": 0.1111111111111111,
+          "top3_inclusion": 0.3333333333333333,
+          "exact_match_rate": 0.0
+        }
+      },
+      "baseline_results": {
+        "qualifying": {
+          "FP3/SQ": {
+            "name": "FP3/SQ",
+            "driver_codes": [
+              "NOR",
+              "LEC",
+              "RUS"
+            ],
+            "game_points": 1
+          }
+        },
+        "race": {
+          "Q Grid": {
+            "name": "Q Grid",
+            "driver_codes": [
+              "RUS",
+              "VER",
+              "PIA"
+            ],
+            "game_points": 4
+          }
+        }
+      }
+    },
+    {
+      "year": 2025,
+      "round": 11,
+      "circuit": "Spielberg",
+      "event_name": "Austrian Grand Prix",
+      "is_sprint_weekend": false,
+      "training_samples": {
+        "qualifying": 1336,
+        "race": 1316
+      },
+      "training_features": {
+        "qualifying": 299,
+        "race": 331
+      },
+      "session_results": {
+        "qualifying": {
+          "driver_codes": [
+            "VER",
+            "RUS",
+            "PIA"
+          ],
+          "actual_codes": [
+            "NOR",
+            "LEC",
+            "PIA"
+          ],
+          "game_points": 2,
+          "ndcg_3": 0.10500099787698204,
+          "map_3": 0.1111111111111111,
+          "top3_inclusion": 0.3333333333333333,
+          "exact_match_rate": 0.3333333333333333
+        },
+        "race": {
+          "driver_codes": [
+            "RUS",
+            "VER",
+            "PIA"
+          ],
+          "actual_codes": [
+            "NOR",
+            "PIA",
+            "LEC"
+          ],
+          "game_points": 1,
+          "ndcg_3": 0.21000199575396408,
+          "map_3": 0.1111111111111111,
+          "top3_inclusion": 0.3333333333333333,
+          "exact_match_rate": 0.0
+        }
+      },
+      "baseline_results": {
+        "qualifying": {
+          "FP3/SQ": {
+            "name": "FP3/SQ",
+            "driver_codes": [
+              "NOR",
+              "PIA",
+              "VER"
+            ],
+            "game_points": 3
+          }
+        },
+        "race": {
+          "Q Grid": {
+            "name": "Q Grid",
+            "driver_codes": [
+              "NOR",
+              "LEC",
+              "PIA"
+            ],
+            "game_points": 4
+          }
+        }
+      }
+    },
+    {
+      "year": 2025,
+      "round": 12,
+      "circuit": "Silverstone",
+      "event_name": "British Grand Prix",
+      "is_sprint_weekend": false,
+      "training_samples": {
+        "qualifying": 1356,
+        "race": 1336
+      },
+      "training_features": {
+        "qualifying": 299,
+        "race": 331
+      },
+      "session_results": {
+        "qualifying": {
+          "driver_codes": [
+            "NOR",
+            "LEC",
+            "PIA"
+          ],
+          "actual_codes": [
+            "VER",
+            "PIA",
+            "NOR"
+          ],
+          "game_points": 2,
+          "ndcg_3": 0.42000399150792816,
+          "map_3": 0.5555555555555555,
+          "top3_inclusion": 0.6666666666666666,
+          "exact_match_rate": 0.0
+        },
+        "race": {
+          "driver_codes": [
+            "NOR",
+            "PIA",
+            "LEC"
+          ],
+          "actual_codes": [
+            "NOR",
+            "PIA",
+            "HUL"
+          ],
+          "game_points": 4,
+          "ndcg_3": 0.894999002123018,
+          "map_3": 0.6666666666666666,
+          "top3_inclusion": 0.6666666666666666,
+          "exact_match_rate": 0.6666666666666666
+        }
+      },
+      "baseline_results": {
+        "qualifying": {
+          "FP3/SQ": {
+            "name": "FP3/SQ",
+            "driver_codes": [
+              "LEC",
+              "PIA",
+              "VER"
+            ],
+            "game_points": 3
+          }
+        },
+        "race": {
+          "Q Grid": {
+            "name": "Q Grid",
+            "driver_codes": [
+              "VER",
+              "PIA",
+              "NOR"
+            ],
+            "game_points": 3
+          }
+        }
+      }
+    },
+    {
+      "year": 2025,
+      "round": 13,
+      "circuit": "Spa-Francorchamps",
+      "event_name": "Belgian Grand Prix",
+      "is_sprint_weekend": true,
+      "training_samples": {
+        "sprint_quali": 140,
+        "sprint_race": 198,
+        "qualifying": 1376,
+        "race": 1356
+      },
+      "training_features": {
+        "sprint_quali": 254,
+        "sprint_race": 259,
+        "qualifying": 299,
+        "race": 331
+      },
+      "session_results": {
+        "sprint_quali": {
+          "driver_codes": [
+            "LAW",
+            "ANT",
+            "OCO"
+          ],
+          "actual_codes": [
+            "PIA",
+            "VER",
+            "NOR"
+          ],
+          "game_points": 0,
+          "ndcg_3": 0.0,
+          "map_3": 0.0,
+          "top3_inclusion": 0.0,
+          "exact_match_rate": 0.0
+        },
+        "sprint_race": {
+          "driver_codes": [
+            "LEC",
+            "OCO",
+            "TSU"
+          ],
+          "actual_codes": [
+            "VER",
+            "PIA",
+            "NOR"
+          ],
+          "game_points": 0,
+          "ndcg_3": 0.0,
+          "map_3": 0.0,
+          "top3_inclusion": 0.0,
+          "exact_match_rate": 0.0
+        },
+        "qualifying": {
+          "driver_codes": [
+            "VER",
+            "PIA",
+            "NOR"
+          ],
+          "actual_codes": [
+            "NOR",
+            "PIA",
+            "LEC"
+          ],
+          "game_points": 3,
+          "ndcg_3": 0.5799960084920718,
+          "map_3": 0.38888888888888884,
+          "top3_inclusion": 0.6666666666666666,
+          "exact_match_rate": 0.3333333333333333
+        },
+        "race": {
+          "driver_codes": [
+            "NOR",
+            "VER",
+            "PIA"
+          ],
+          "actual_codes": [
+            "PIA",
+            "NOR",
+            "LEC"
+          ],
+          "game_points": 2,
+          "ndcg_3": 0.7350069851388743,
+          "map_3": 0.5555555555555555,
+          "top3_inclusion": 0.6666666666666666,
+          "exact_match_rate": 0.0
+        }
+      },
+      "baseline_results": {
+        "sprint_quali": {
+          "FP1": {
+            "name": "FP1",
+            "driver_codes": [
+              "PIA",
+              "VER",
+              "NOR"
+            ],
+            "game_points": 6
+          }
+        },
+        "sprint_race": {
+          "SQ Grid": {
+            "name": "SQ Grid",
+            "driver_codes": [
+              "PIA",
+              "VER",
+              "NOR"
+            ],
+            "game_points": 4
+          }
+        },
+        "qualifying": {
+          "FP3/SQ": {
+            "name": "FP3/SQ",
+            "driver_codes": [
+              "PIA",
+              "VER",
+              "NOR"
+            ],
+            "game_points": 2
+          }
+        },
+        "race": {
+          "Q Grid": {
+            "name": "Q Grid",
+            "driver_codes": [
+              "NOR",
+              "PIA",
+              "LEC"
+            ],
+            "game_points": 4
+          }
+        }
+      }
+    },
+    {
+      "year": 2025,
+      "round": 14,
+      "circuit": "Budapest",
+      "event_name": "Hungarian Grand Prix",
+      "is_sprint_weekend": false,
+      "training_samples": {
+        "qualifying": 1396,
+        "race": 1376
+      },
+      "training_features": {
+        "qualifying": 299,
+        "race": 331
+      },
+      "session_results": {
+        "qualifying": {
+          "driver_codes": [
+            "NOR",
+            "PIA",
+            "LEC"
+          ],
+          "actual_codes": [
+            "LEC",
+            "PIA",
+            "NOR"
+          ],
+          "game_points": 4,
+          "ndcg_3": 0.7899980042460358,
+          "map_3": 1.0,
+          "top3_inclusion": 1.0,
+          "exact_match_rate": 0.3333333333333333
+        },
+        "race": {
+          "driver_codes": [
+            "NOR",
+            "PIA",
+            "LEC"
+          ],
+          "actual_codes": [
+            "NOR",
+            "PIA",
+            "RUS"
+          ],
+          "game_points": 4,
+          "ndcg_3": 0.894999002123018,
+          "map_3": 0.6666666666666666,
+          "top3_inclusion": 0.6666666666666666,
+          "exact_match_rate": 0.6666666666666666
+        }
+      },
+      "baseline_results": {
+        "qualifying": {
+          "FP3/SQ": {
+            "name": "FP3/SQ",
+            "driver_codes": [
+              "PIA",
+              "NOR",
+              "LEC"
+            ],
+            "game_points": 3
+          }
+        },
+        "race": {
+          "Q Grid": {
+            "name": "Q Grid",
+            "driver_codes": [
+              "LEC",
+              "PIA",
+              "NOR"
+            ],
+            "game_points": 3
+          }
+        }
+      }
+    },
+    {
+      "year": 2025,
+      "round": 15,
+      "circuit": "Zandvoort",
+      "event_name": "Dutch Grand Prix",
+      "is_sprint_weekend": false,
+      "training_samples": {
+        "qualifying": 1416,
+        "race": 1396
+      },
+      "training_features": {
+        "qualifying": 299,
+        "race": 331
+      },
+      "session_results": {
+        "qualifying": {
+          "driver_codes": [
+            "PIA",
+            "LEC",
+            "RUS"
+          ],
+          "actual_codes": [
+            "PIA",
+            "NOR",
+            "VER"
+          ],
+          "game_points": 2,
+          "ndcg_3": 0.6300059872618923,
+          "map_3": 0.3333333333333333,
+          "top3_inclusion": 0.3333333333333333,
+          "exact_match_rate": 0.3333333333333333
+        },
+        "race": {
+          "driver_codes": [
+            "NOR",
+            "PIA",
+            "LEC"
+          ],
+          "actual_codes": [
+            "PIA",
+            "VER",
+            "HAD"
+          ],
+          "game_points": 1,
+          "ndcg_3": 0.39748952229168844,
+          "map_3": 0.16666666666666666,
+          "top3_inclusion": 0.3333333333333333,
+          "exact_match_rate": 0.0
+        }
+      },
+      "baseline_results": {
+        "qualifying": {
+          "FP3/SQ": {
+            "name": "FP3/SQ",
+            "driver_codes": [
+              "NOR",
+              "PIA",
+              "RUS"
+            ],
+            "game_points": 2
+          }
+        },
+        "race": {
+          "Q Grid": {
+            "name": "Q Grid",
+            "driver_codes": [
+              "PIA",
+              "NOR",
+              "VER"
+            ],
+            "game_points": 3
+          }
+        }
+      }
+    },
+    {
+      "year": 2025,
+      "round": 16,
+      "circuit": "Monza",
+      "event_name": "Italian Grand Prix",
+      "is_sprint_weekend": false,
+      "training_samples": {
+        "qualifying": 1436,
+        "race": 1416
+      },
+      "training_features": {
+        "qualifying": 299,
+        "race": 331
+      },
+      "session_results": {
+        "qualifying": {
+          "driver_codes": [
+            "PIA",
+            "NOR",
+            "VER"
+          ],
+          "actual_codes": [
+            "VER",
+            "NOR",
+            "PIA"
+          ],
+          "game_points": 4,
+          "ndcg_3": 0.7899980042460358,
+          "map_3": 1.0,
+          "top3_inclusion": 1.0,
+          "exact_match_rate": 0.3333333333333333
+        },
+        "race": {
+          "driver_codes": [
+            "PIA",
+            "NOR",
+            "VER"
+          ],
+          "actual_codes": [
+            "VER",
+            "NOR",
+            "PIA"
+          ],
+          "game_points": 4,
+          "ndcg_3": 0.7899980042460358,
+          "map_3": 1.0,
+          "top3_inclusion": 1.0,
+          "exact_match_rate": 0.3333333333333333
+        }
+      },
+      "baseline_results": {
+        "qualifying": {
+          "FP3/SQ": {
+            "name": "FP3/SQ",
+            "driver_codes": [
+              "NOR",
+              "LEC",
+              "PIA"
+            ],
+            "game_points": 3
+          }
+        },
+        "race": {
+          "Q Grid": {
+            "name": "Q Grid",
+            "driver_codes": [
+              "VER",
+              "NOR",
+              "PIA"
+            ],
+            "game_points": 6
+          }
+        }
+      }
+    },
+    {
+      "year": 2025,
+      "round": 17,
+      "circuit": "Baku",
+      "event_name": "Azerbaijan Grand Prix",
+      "is_sprint_weekend": false,
+      "training_samples": {
+        "qualifying": 1456,
+        "race": 1436
+      },
+      "training_features": {
+        "qualifying": 299,
+        "race": 331
+      },
+      "session_results": {
+        "qualifying": {
+          "driver_codes": [
+            "VER",
+            "NOR",
+            "PIA"
+          ],
+          "actual_codes": [
+            "VER",
+            "SAI",
+            "LAW"
+          ],
+          "game_points": 2,
+          "ndcg_3": 0.6300059872618923,
+          "map_3": 0.3333333333333333,
+          "top3_inclusion": 0.3333333333333333,
+          "exact_match_rate": 0.3333333333333333
+        },
+        "race": {
+          "driver_codes": [
+            "VER",
+            "NOR",
+            "PIA"
+          ],
+          "actual_codes": [
+            "VER",
+            "RUS",
+            "SAI"
+          ],
+          "game_points": 2,
+          "ndcg_3": 0.6300059872618923,
+          "map_3": 0.3333333333333333,
+          "top3_inclusion": 0.3333333333333333,
+          "exact_match_rate": 0.3333333333333333
+        }
+      },
+      "baseline_results": {
+        "qualifying": {
+          "FP3/SQ": {
+            "name": "FP3/SQ",
+            "driver_codes": [
+              "NOR",
+              "VER",
+              "PIA"
+            ],
+            "game_points": 1
+          }
+        },
+        "race": {
+          "Q Grid": {
+            "name": "Q Grid",
+            "driver_codes": [
+              "VER",
+              "SAI",
+              "LAW"
+            ],
+            "game_points": 3
+          }
+        }
+      }
+    },
+    {
+      "year": 2025,
+      "round": 18,
+      "circuit": "Marina Bay",
+      "event_name": "Singapore Grand Prix",
+      "is_sprint_weekend": false,
+      "training_samples": {
+        "qualifying": 1476,
+        "race": 1456
+      },
+      "training_features": {
+        "qualifying": 299,
+        "race": 331
+      },
+      "session_results": {
+        "qualifying": {
+          "driver_codes": [
+            "VER",
+            "SAI",
+            "RUS"
+          ],
+          "actual_codes": [
+            "RUS",
+            "VER",
+            "PIA"
+          ],
+          "game_points": 2,
+          "ndcg_3": 0.7350069851388743,
+          "map_3": 0.5555555555555555,
+          "top3_inclusion": 0.6666666666666666,
+          "exact_match_rate": 0.0
+        },
+        "race": {
+          "driver_codes": [
+            "VER",
+            "RUS",
+            "SAI"
+          ],
+          "actual_codes": [
+            "RUS",
+            "VER",
+            "NOR"
+          ],
+          "game_points": 2,
+          "ndcg_3": 0.8174935137996165,
+          "map_3": 0.6666666666666666,
+          "top3_inclusion": 0.6666666666666666,
+          "exact_match_rate": 0.0
+        }
+      },
+      "baseline_results": {
+        "qualifying": {
+          "FP3/SQ": {
+            "name": "FP3/SQ",
+            "driver_codes": [
+              "VER",
+              "PIA",
+              "RUS"
+            ],
+            "game_points": 3
+          }
+        },
+        "race": {
+          "Q Grid": {
+            "name": "Q Grid",
+            "driver_codes": [
+              "RUS",
+              "VER",
+              "PIA"
+            ],
+            "game_points": 4
+          }
+        }
+      }
+    },
+    {
+      "year": 2025,
+      "round": 19,
+      "circuit": "Austin",
+      "event_name": "United States Grand Prix",
+      "is_sprint_weekend": true,
+      "training_samples": {
+        "sprint_quali": 160,
+        "sprint_race": 218,
+        "qualifying": 1496,
+        "race": 1476
+      },
+      "training_features": {
+        "sprint_quali": 254,
+        "sprint_race": 259,
+        "qualifying": 299,
+        "race": 331
+      },
+      "session_results": {
+        "sprint_quali": {
+          "driver_codes": [
+            "PIA",
+            "VER",
+            "NOR"
+          ],
+          "actual_codes": [
+            "VER",
+            "NOR",
+            "PIA"
+          ],
+          "game_points": 3,
+          "ndcg_3": 0.8174935137996165,
+          "map_3": 1.0,
+          "top3_inclusion": 1.0,
+          "exact_match_rate": 0.0
+        },
+        "sprint_race": {
+          "driver_codes": [
+            "VER",
+            "PIA",
+            "NOR"
+          ],
+          "actual_codes": [
+            "VER",
+            "RUS",
+            "SAI"
+          ],
+          "game_points": 2,
+          "ndcg_3": 0.6300059872618923,
+          "map_3": 0.3333333333333333,
+          "top3_inclusion": 0.3333333333333333,
+          "exact_match_rate": 0.3333333333333333
+        },
+        "qualifying": {
+          "driver_codes": [
+            "RUS",
+            "VER",
+            "PIA"
+          ],
+          "actual_codes": [
+            "VER",
+            "NOR",
+            "LEC"
+          ],
+          "game_points": 1,
+          "ndcg_3": 0.39748952229168844,
+          "map_3": 0.16666666666666666,
+          "top3_inclusion": 0.3333333333333333,
+          "exact_match_rate": 0.0
+        },
+        "race": {
+          "driver_codes": [
+            "RUS",
+            "VER",
+            "PIA"
+          ],
+          "actual_codes": [
+            "VER",
+            "NOR",
+            "LEC"
+          ],
+          "game_points": 1,
+          "ndcg_3": 0.39748952229168844,
+          "map_3": 0.16666666666666666,
+          "top3_inclusion": 0.3333333333333333,
+          "exact_match_rate": 0.0
+        }
+      },
+      "baseline_results": {
+        "sprint_quali": {
+          "FP1": {
+            "name": "FP1",
+            "driver_codes": [
+              "NOR",
+              "HUL",
+              "PIA"
+            ],
+            "game_points": 3
+          }
+        },
+        "sprint_race": {
+          "SQ Grid": {
+            "name": "SQ Grid",
+            "driver_codes": [
+              "VER",
+              "NOR",
+              "PIA"
+            ],
+            "game_points": 2
+          }
+        },
+        "qualifying": {
+          "FP3/SQ": {
+            "name": "FP3/SQ",
+            "driver_codes": [
+              "VER",
+              "NOR",
+              "PIA"
+            ],
+            "game_points": 4
+          }
+        },
+        "race": {
+          "Q Grid": {
+            "name": "Q Grid",
+            "driver_codes": [
+              "VER",
+              "NOR",
+              "LEC"
+            ],
+            "game_points": 6
+          }
+        }
+      }
+    },
+    {
+      "year": 2025,
+      "round": 20,
+      "circuit": "Mexico City",
+      "event_name": "Mexico City Grand Prix",
+      "is_sprint_weekend": false,
+      "training_samples": {
+        "qualifying": 1516,
+        "race": 1496
+      },
+      "training_features": {
+        "qualifying": 299,
+        "race": 331
+      },
+      "session_results": {
+        "qualifying": {
+          "driver_codes": [
+            "VER",
+            "NOR",
+            "RUS"
+          ],
+          "actual_codes": [
+            "NOR",
+            "LEC",
+            "HAM"
+          ],
+          "game_points": 1,
+          "ndcg_3": 0.39748952229168844,
+          "map_3": 0.16666666666666666,
+          "top3_inclusion": 0.3333333333333333,
+          "exact_match_rate": 0.0
+        },
+        "race": {
+          "driver_codes": [
+            "VER",
+            "NOR",
+            "RUS"
+          ],
+          "actual_codes": [
+            "NOR",
+            "LEC",
+            "VER"
+          ],
+          "game_points": 2,
+          "ndcg_3": 0.6074915180456525,
+          "map_3": 0.6666666666666666,
+          "top3_inclusion": 0.6666666666666666,
+          "exact_match_rate": 0.0
+        }
+      },
+      "baseline_results": {
+        "qualifying": {
+          "FP3/SQ": {
+            "name": "FP3/SQ",
+            "driver_codes": [
+              "NOR",
+              "HAM",
+              "RUS"
+            ],
+            "game_points": 3
+          }
+        },
+        "race": {
+          "Q Grid": {
+            "name": "Q Grid",
+            "driver_codes": [
+              "NOR",
+              "LEC",
+              "HAM"
+            ],
+            "game_points": 4
+          }
+        }
+      }
+    },
+    {
+      "year": 2025,
+      "round": 21,
+      "circuit": "S\u00e3o Paulo",
+      "event_name": "S\u00e3o Paulo Grand Prix",
+      "is_sprint_weekend": true,
+      "training_samples": {
+        "sprint_quali": 180,
+        "sprint_race": 238,
+        "qualifying": 1536,
+        "race": 1516
+      },
+      "training_features": {
+        "sprint_quali": 254,
+        "sprint_race": 259,
+        "qualifying": 299,
+        "race": 331
+      },
+      "session_results": {
+        "sprint_quali": {
+          "driver_codes": [
+            "VER",
+            "NOR",
+            "PIA"
+          ],
+          "actual_codes": [
+            "NOR",
+            "ANT",
+            "PIA"
+          ],
+          "game_points": 3,
+          "ndcg_3": 0.5024905201686705,
+          "map_3": 0.38888888888888884,
+          "top3_inclusion": 0.6666666666666666,
+          "exact_match_rate": 0.3333333333333333
+        },
+        "sprint_race": {
+          "driver_codes": [
+            "VER",
+            "PIA",
+            "NOR"
+          ],
+          "actual_codes": [
+            "NOR",
+            "ANT",
+            "RUS"
+          ],
+          "game_points": 1,
+          "ndcg_3": 0.31500299363094614,
+          "map_3": 0.1111111111111111,
+          "top3_inclusion": 0.3333333333333333,
+          "exact_match_rate": 0.0
+        },
+        "qualifying": {
+          "driver_codes": [
+            "NOR",
+            "LEC",
+            "HAM"
+          ],
+          "actual_codes": [
+            "NOR",
+            "ANT",
+            "LEC"
+          ],
+          "game_points": 3,
+          "ndcg_3": 0.7625024946924551,
+          "map_3": 0.6666666666666666,
+          "top3_inclusion": 0.6666666666666666,
+          "exact_match_rate": 0.3333333333333333
+        },
+        "race": {
+          "driver_codes": [
+            "NOR",
+            "LEC",
+            "RUS"
+          ],
+          "actual_codes": [
+            "NOR",
+            "ANT",
+            "VER"
+          ],
+          "game_points": 2,
+          "ndcg_3": 0.6300059872618923,
+          "map_3": 0.3333333333333333,
+          "top3_inclusion": 0.3333333333333333,
+          "exact_match_rate": 0.3333333333333333
+        }
+      },
+      "baseline_results": {
+        "sprint_quali": {
+          "FP1": {
+            "name": "FP1",
+            "driver_codes": [
+              "NOR",
+              "PIA",
+              "HUL"
+            ],
+            "game_points": 3
+          }
+        },
+        "sprint_race": {
+          "SQ Grid": {
+            "name": "SQ Grid",
+            "driver_codes": [
+              "NOR",
+              "ANT",
+              "PIA"
+            ],
+            "game_points": 4
+          }
+        },
+        "qualifying": {
+          "FP3/SQ": {
+            "name": "FP3/SQ",
+            "driver_codes": [
+              "NOR",
+              "ANT",
+              "PIA"
+            ],
+            "game_points": 4
+          }
+        },
+        "race": {
+          "Q Grid": {
+            "name": "Q Grid",
+            "driver_codes": [
+              "NOR",
+              "ANT",
+              "LEC"
+            ],
+            "game_points": 4
+          }
+        }
+      }
+    },
+    {
+      "year": 2025,
+      "round": 22,
+      "circuit": "Las Vegas",
+      "event_name": "Las Vegas Grand Prix",
+      "is_sprint_weekend": false,
+      "training_samples": {
+        "qualifying": 1555,
+        "race": 1536
+      },
+      "training_features": {
+        "qualifying": 299,
+        "race": 331
+      },
+      "session_results": {
+        "qualifying": {
+          "driver_codes": [
+            "ANT",
+            "NOR",
+            "LEC"
+          ],
+          "actual_codes": [
+            "NOR",
+            "VER",
+            "SAI"
+          ],
+          "game_points": 1,
+          "ndcg_3": 0.39748952229168844,
+          "map_3": 0.16666666666666666,
+          "top3_inclusion": 0.3333333333333333,
+          "exact_match_rate": 0.0
+        },
+        "race": {
+          "driver_codes": [
+            "NOR",
+            "ANT",
+            "LEC"
+          ],
+          "actual_codes": [
+            "VER",
+            "RUS",
+            "ANT"
+          ],
+          "game_points": 1,
+          "ndcg_3": 0.13249650743056282,
+          "map_3": 0.16666666666666666,
+          "top3_inclusion": 0.3333333333333333,
+          "exact_match_rate": 0.0
+        }
+      },
+      "baseline_results": {
+        "qualifying": {
+          "FP3/SQ": {
+            "name": "FP3/SQ",
+            "driver_codes": [
+              "RUS",
+              "VER",
+              "ALB"
+            ],
+            "game_points": 2
+          }
+        },
+        "race": {
+          "Q Grid": {
+            "name": "Q Grid",
+            "driver_codes": [
+              "NOR",
+              "VER",
+              "SAI"
+            ],
+            "game_points": 1
+          }
+        }
+      }
+    },
+    {
+      "year": 2025,
+      "round": 23,
+      "circuit": "Lusail",
+      "event_name": "Qatar Grand Prix",
+      "is_sprint_weekend": true,
+      "training_samples": {
+        "sprint_quali": 200,
+        "sprint_race": 258,
+        "qualifying": 1575,
+        "race": 1556
+      },
+      "training_features": {
+        "sprint_quali": 254,
+        "sprint_race": 259,
+        "qualifying": 299,
+        "race": 331
+      },
+      "session_results": {
+        "sprint_quali": {
+          "driver_codes": [
+            "NOR",
+            "ANT",
+            "PIA"
+          ],
+          "actual_codes": [
+            "PIA",
+            "RUS",
+            "NOR"
+          ],
+          "game_points": 2,
+          "ndcg_3": 0.5250049893849101,
+          "map_3": 0.5555555555555555,
+          "top3_inclusion": 0.6666666666666666,
+          "exact_match_rate": 0.0
+        },
+        "sprint_race": {
+          "driver_codes": [
+            "NOR",
+            "PIA",
+            "ANT"
+          ],
+          "actual_codes": [
+            "PIA",
+            "RUS",
+            "NOR"
+          ],
+          "game_points": 2,
+          "ndcg_3": 0.6074915180456525,
+          "map_3": 0.6666666666666666,
+          "top3_inclusion": 0.6666666666666666,
+          "exact_match_rate": 0.0
+        },
+        "qualifying": {
+          "driver_codes": [
+            "NOR",
+            "VER",
+            "SAI"
+          ],
+          "actual_codes": [
+            "PIA",
+            "NOR",
+            "VER"
+          ],
+          "game_points": 2,
+          "ndcg_3": 0.5525004989384911,
+          "map_3": 0.6666666666666666,
+          "top3_inclusion": 0.6666666666666666,
+          "exact_match_rate": 0.0
+        },
+        "race": {
+          "driver_codes": [
+            "VER",
+            "NOR",
+            "RUS"
+          ],
+          "actual_codes": [
+            "VER",
+            "PIA",
+            "SAI"
+          ],
+          "game_points": 2,
+          "ndcg_3": 0.6300059872618923,
+          "map_3": 0.3333333333333333,
+          "top3_inclusion": 0.3333333333333333,
+          "exact_match_rate": 0.3333333333333333
+        }
+      },
+      "baseline_results": {
+        "sprint_quali": {
+          "FP1": {
+            "name": "FP1",
+            "driver_codes": [
+              "PIA",
+              "NOR",
+              "ALO"
+            ],
+            "game_points": 3
+          }
+        },
+        "sprint_race": {
+          "SQ Grid": {
+            "name": "SQ Grid",
+            "driver_codes": [
+              "PIA",
+              "RUS",
+              "NOR"
+            ],
+            "game_points": 6
+          }
+        },
+        "qualifying": {
+          "FP3/SQ": {
+            "name": "FP3/SQ",
+            "driver_codes": [
+              "PIA",
+              "RUS",
+              "NOR"
+            ],
+            "game_points": 3
+          }
+        },
+        "race": {
+          "Q Grid": {
+            "name": "Q Grid",
+            "driver_codes": [
+              "PIA",
+              "NOR",
+              "VER"
+            ],
+            "game_points": 2
+          }
+        }
+      }
+    },
+    {
+      "year": 2025,
+      "round": 24,
+      "circuit": "Yas Island",
+      "event_name": "Abu Dhabi Grand Prix",
+      "is_sprint_weekend": false,
+      "training_samples": {
+        "qualifying": 1595,
+        "race": 1576
+      },
+      "training_features": {
+        "qualifying": 299,
+        "race": 331
+      },
+      "session_results": {
+        "qualifying": {
+          "driver_codes": [
+            "NOR",
+            "VER",
+            "PIA"
+          ],
+          "actual_codes": [
+            "VER",
+            "NOR",
+            "PIA"
+          ],
+          "game_points": 4,
+          "ndcg_3": 0.9224945116765986,
+          "map_3": 1.0,
+          "top3_inclusion": 1.0,
+          "exact_match_rate": 0.3333333333333333
+        },
+        "race": {
+          "driver_codes": [
+            "VER",
+            "PIA",
+            "NOR"
+          ],
+          "actual_codes": [
+            "VER",
+            "PIA",
+            "NOR"
+          ],
+          "game_points": 6,
+          "ndcg_3": 1.0,
+          "map_3": 1.0,
+          "top3_inclusion": 1.0,
+          "exact_match_rate": 1.0
+        }
+      },
+      "baseline_results": {
+        "qualifying": {
+          "FP3/SQ": {
+            "name": "FP3/SQ",
+            "driver_codes": [
+              "RUS",
+              "NOR",
+              "VER"
+            ],
+            "game_points": 3
+          }
+        },
+        "race": {
+          "Q Grid": {
+            "name": "Q Grid",
+            "driver_codes": [
+              "VER",
+              "NOR",
+              "PIA"
+            ],
+            "game_points": 4
+          }
+        }
+      }
+    }
+  ]
+}
