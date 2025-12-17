@@ -135,58 +135,58 @@ export/features: ## Export features for a race to JSON (RACE=2025-24 TYPE=qualif
 
 ##@ Predictions
 
-# Usage: make predict/qualifying RACE=2025-qatar
+# Usage: make predict/qualifying RACE=2025-24
 .PHONY: predict/qualifying
-predict/qualifying: ## Predict qualifying top-3 (RACE=2025-qatar)
+predict/qualifying: ## Predict qualifying top-3 (RACE=2025-24)
 	@if [ -z "$(RACE)" ]; then \
-		echo "Usage: make predict/qualifying RACE=2025-qatar"; \
+		echo "Usage: make predict/qualifying RACE=2025-24"; \
 		exit 1; \
 	fi
 	@uv run python -m src.cli.predict --type qualifying --race-id $(RACE)
 
-# Usage: make predict/race RACE=2025-qatar
+# Usage: make predict/race RACE=2025-24
 .PHONY: predict/race
-predict/race: ## Predict race top-3 (RACE=2025-qatar)
+predict/race: ## Predict race top-3 (RACE=2025-24)
 	@if [ -z "$(RACE)" ]; then \
-		echo "Usage: make predict/race RACE=2025-qatar"; \
+		echo "Usage: make predict/race RACE=2025-24"; \
 		exit 1; \
 	fi
 	@uv run python -m src.cli.predict --type race --race-id $(RACE)
 
-# Usage: make predict/sprint_quali RACE=2025-qatar
+# Usage: make predict/sprint_quali RACE=2025-24
 .PHONY: predict/sprint_quali
-predict/sprint_quali: ## Predict sprint quali top-3 (RACE=2025-qatar)
+predict/sprint_quali: ## Predict sprint quali top-3 (RACE=2025-24)
 	@if [ -z "$(RACE)" ]; then \
-		echo "Usage: make predict/sprint_quali RACE=2025-qatar"; \
+		echo "Usage: make predict/sprint_quali RACE=2025-24"; \
 		exit 1; \
 	fi
 	@uv run python -m src.cli.predict --type sprint_quali --race-id $(RACE)
 
-# Usage: make predict/sprint_race RACE=2025-qatar
+# Usage: make predict/sprint_race RACE=2025-24
 .PHONY: predict/sprint_race
-predict/sprint_race: ## Predict sprint race top-3 (RACE=2025-qatar)
+predict/sprint_race: ## Predict sprint race top-3 (RACE=2025-24)
 	@if [ -z "$(RACE)" ]; then \
-		echo "Usage: make predict/sprint_race RACE=2025-qatar"; \
+		echo "Usage: make predict/sprint_race RACE=2025-24"; \
 		exit 1; \
 	fi
 	@uv run python -m src.cli.predict --type sprint_race --race-id $(RACE)
 
-# Usage: make predict/explain RACE=2025-qatar TYPE=qualifying
+# Usage: make predict/explain RACE=2025-24 TYPE=qualifying
 .PHONY: predict/explain
-predict/explain: ## Predict with SHAP explanation (RACE=2025-qatar TYPE=qualifying)
+predict/explain: ## Predict with SHAP explanation (RACE=2025-24 TYPE=qualifying)
 	@if [ -z "$(RACE)" ] || [ -z "$(TYPE)" ]; then \
-		echo "Usage: make predict/explain RACE=2025-qatar TYPE=qualifying"; \
+		echo "Usage: make predict/explain RACE=2025-24 TYPE=qualifying"; \
 		exit 1; \
 	fi
 	@uv run python -m src.cli.predict --type $(TYPE) --race-id $(RACE) --explain
 
 ##@ Evaluation
 
-# Usage: make evaluate RACE=2025-qatar TYPE=qualifying
+# Usage: make evaluate RACE=2025-24 TYPE=qualifying
 .PHONY: evaluate
-evaluate: ## Evaluate model on historical race (RACE=2025-qatar TYPE=qualifying)
+evaluate: ## Evaluate model on historical race (RACE=2025-24 TYPE=qualifying)
 	@if [ -z "$(RACE)" ] || [ -z "$(TYPE)" ]; then \
-		echo "Usage: make evaluate RACE=2025-qatar TYPE=qualifying"; \
+		echo "Usage: make evaluate RACE=2025-24 TYPE=qualifying"; \
 		exit 1; \
 	fi
 	@uv run python -m src.cli.evaluate --type $(TYPE) --race-id $(RACE)

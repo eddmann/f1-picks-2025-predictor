@@ -110,7 +110,7 @@ Traditional classification (predicting P1/P2/P3 as classes) doesn't capture that
 
 ### Features
 
-The model uses ~300 features across several categories:
+The model uses ~250-330 features across several categories:
 
 #### ELO Rating System
 

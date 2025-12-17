@@ -38,14 +38,14 @@ make train/sprint_race
 make train/tune TYPE=qualifying TRIALS=50  # Hyperparameter tuning
 
 # Predictions
-make predict/qualifying RACE=2025-qatar
-make predict/race RACE=2025-qatar
-make predict/sprint_quali RACE=2025-qatar  # Sprint weekends only
-make predict/sprint_race RACE=2025-qatar   # Sprint weekends only
-make predict/explain RACE=2025-qatar TYPE=qualifying  # With SHAP explanation
+make predict/qualifying RACE=2025-24
+make predict/race RACE=2025-24
+make predict/sprint_quali RACE=2025-24  # Sprint weekends only
+make predict/sprint_race RACE=2025-24   # Sprint weekends only
+make predict/explain RACE=2025-24 TYPE=qualifying  # With SHAP explanation
 
 # Evaluation
-make evaluate RACE=2025-qatar TYPE=qualifying
+make evaluate RACE=2025-24 TYPE=qualifying
 make evaluate/season SEASON=2024 TYPE=qualifying
 make evaluate/baselines SEASON=2024
 
