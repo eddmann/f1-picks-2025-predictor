@@ -36,6 +36,7 @@ make train/race        # Train race model only
 make train/sprint_quali
 make train/sprint_race
 make train/tune TYPE=qualifying TRIALS=50  # Hyperparameter tuning
+make train/status          # Show training data status
 
 # Predictions
 make predict/qualifying RACE=2025-24
@@ -48,6 +49,12 @@ make predict/explain RACE=2025-24 TYPE=qualifying  # With SHAP explanation
 make evaluate RACE=2025-24 TYPE=qualifying
 make evaluate/season SEASON=2024 TYPE=qualifying
 make evaluate/baselines SEASON=2024
+
+# Backtesting
+make backtest SEASON=2025              # Run full season backtest
+make backtest SEASON=2025 TYPE=qualifying  # Backtest specific model type
+make backtest SEASON=2025 START=10     # Start from round 10
+make backtest/clean                    # Remove cached backtest models
 
 # Model Export (ONNX)
 make export/onnx            # Export all models to ONNX format
@@ -64,11 +71,13 @@ make test/unit         # Run unit tests only
 make lint              # Run ruff linter
 make lint/fix          # Run linter with auto-fix
 make format            # Format code
+make format/check      # Check formatting without changes
 make ci                # Run all CI checks (lint + format + test)
 
 # Cleaning
 make clean             # Clean Python cache files
 make clean/models      # Remove trained models
+make clean/predictions # Remove saved predictions
 make clean/all         # Clean everything
 ```
 
@@ -149,6 +158,12 @@ Note: Sprint weekends have NO FP2 or FP3 sessions.
 - `first_lap_features.py` - Lap 1 position change performance
 - `momentum_features.py` - Recent form and trend features
 - `relative_features.py` - Position vs field and teammate deltas
+- `circuit_features.py` - Circuit-specific driver/team performance
+- `circuit_overtaking_features.py` - Overtaking rates at specific circuits
+- `driver_circuit_features.py` - Driver-circuit interaction patterns
+- `track_evolution_features.py` - Track grip improvement throughout session
+- `wet_weather_skill_features.py` - Wet weather performance analysis
+- `race_pace_features.py` - Position changes and race pace progression
 
 **Models** (`src/models/`):
 
@@ -176,6 +191,7 @@ Note: Sprint weekends have NO FP2 or FP3 sessions.
 - `tune_hyperparams.py` - Optuna hyperparameter optimization
 - `export_onnx.py` - Export models to ONNX format (patches lambdarank→regression, see [onnxmltools#338](https://github.com/onnx/onnxmltools/issues/338))
 - `export_features.py` - Export computed features to JSON for cross-platform inference
+- `backtest.py` - Run temporal backtests across a full season
 
 **PHP Inference** (`inference/php/`):
 
